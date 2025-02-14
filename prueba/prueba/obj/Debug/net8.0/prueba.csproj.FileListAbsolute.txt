@@ -1,0 +1,15 @@
+C:\Users\Familia\source\repos\Ficha2956247\prueba\prueba\bin\Debug\net8.0\prueba.exe
+C:\Users\Familia\source\repos\Ficha2956247\prueba\prueba\bin\Debug\net8.0\prueba.deps.json
+C:\Users\Familia\source\repos\Ficha2956247\prueba\prueba\bin\Debug\net8.0\prueba.runtimeconfig.json
+C:\Users\Familia\source\repos\Ficha2956247\prueba\prueba\bin\Debug\net8.0\prueba.dll
+C:\Users\Familia\source\repos\Ficha2956247\prueba\prueba\bin\Debug\net8.0\prueba.pdb
+C:\Users\Familia\source\repos\Ficha2956247\prueba\prueba\obj\Debug\net8.0\prueba.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Familia\source\repos\Ficha2956247\prueba\prueba\obj\Debug\net8.0\prueba.AssemblyInfoInputs.cache
+C:\Users\Familia\source\repos\Ficha2956247\prueba\prueba\obj\Debug\net8.0\prueba.AssemblyInfo.cs
+C:\Users\Familia\source\repos\Ficha2956247\prueba\prueba\obj\Debug\net8.0\prueba.csproj.CoreCompileInputs.cache
+C:\Users\Familia\source\repos\Ficha2956247\prueba\prueba\obj\Debug\net8.0\prueba.sourcelink.json
+C:\Users\Familia\source\repos\Ficha2956247\prueba\prueba\obj\Debug\net8.0\prueba.dll
+C:\Users\Familia\source\repos\Ficha2956247\prueba\prueba\obj\Debug\net8.0\refint\prueba.dll
+C:\Users\Familia\source\repos\Ficha2956247\prueba\prueba\obj\Debug\net8.0\prueba.pdb
+C:\Users\Familia\source\repos\Ficha2956247\prueba\prueba\obj\Debug\net8.0\prueba.genruntimeconfig.cache
+C:\Users\Familia\source\repos\Ficha2956247\prueba\prueba\obj\Debug\net8.0\ref\prueba.dll

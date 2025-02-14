@@ -1,0 +1,7 @@
+C:\Users\Familia\source\repos\Ficha2956247\Estructura_de_control\Estructura_de_control\bin\Debug\Estructura_de_control.exe.config
+C:\Users\Familia\source\repos\Ficha2956247\Estructura_de_control\Estructura_de_control\bin\Debug\Estructura_de_control.exe
+C:\Users\Familia\source\repos\Ficha2956247\Estructura_de_control\Estructura_de_control\bin\Debug\Estructura_de_control.pdb
+C:\Users\Familia\source\repos\Ficha2956247\Estructura_de_control\Estructura_de_control\obj\Debug\Estructura_de_control.csproj.AssemblyReference.cache
+C:\Users\Familia\source\repos\Ficha2956247\Estructura_de_control\Estructura_de_control\obj\Debug\Estructura_de_control.csproj.CoreCompileInputs.cache
+C:\Users\Familia\source\repos\Ficha2956247\Estructura_de_control\Estructura_de_control\obj\Debug\Estructura_de_control.exe
+C:\Users\Familia\source\repos\Ficha2956247\Estructura_de_control\Estructura_de_control\obj\Debug\Estructura_de_control.pdb
