@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva de C# Básico</title>
+    <style>
+        /* Estilos CSS */
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-bg: #f8f9fa;
+            --dark-bg: #343a40;
+            --text-color: #212529;
+            --code-bg: #e9ecef;
+            --border-color: #dee2e6;
+            --header-bg: #004d40; /* Darker green for header */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--header-bg);
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        header img {
+            height: 50px; /* Adjust height as needed */
+            margin-right: 15px;
+            border-radius: 5px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.5em;
+            font-weight: 500;
+        }
+
+        .container {
+            display: flex;
+            flex: 1;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--dark-bg);
+            color: white;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .sidebar h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-size: 1.3em;
+            border-bottom: 1px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar ul li a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .sidebar ul li a:hover {
+            background-color: var(--primary-color);
+        }
+
+        .sidebar ul li a.active {
+            background-color: var(--primary-color);
+            font-weight: bold;
+            color: white;
+        }
+
+        .content-area {
+            flex-grow: 1;
+            padding: 20px 30px;
+            overflow-y: auto;
+        }
+
+        .lesson-section {
+            display: none; /* Hidden by default */
+            margin-bottom: 40px;
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .lesson-section.active {
+            display: block; /* Shown when active */
+        }
+
+        h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+            font-size: 2em;
+        }
+
+        h3 {
+            color: var(--secondary-color);
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        ul {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            padding-left: 20px;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            border: 1px solid var(--border-color);
+        }
+
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            color: var(--text-color);
+        }
+
+        .console-simulation {
+            background-color: #333;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            position: relative;
+        }
+        .console-simulation p {
+            margin: 0;
+            padding: 2px 0;
+        }
+        .output-arrow {
+            color: #eee;
+            font-weight: bold;
+            margin: 0 10px;
+        }
+
+        .exercise-area {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px dashed var(--border-color);
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.95em;
+            resize: vertical;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.2s ease;
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            background-color: #0056b3; /* Darker primary */
+        }
+
+        .btn-check {
+            background-color: var(--success-color);
+        }
+        .btn-check:hover {
+            background-color: #218838;
+        }
+
+        .btn-nav {
+            background-color: var(--secondary-color);
+        }
+        .btn-nav:hover {
+            background-color: #5a6268;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: none; /* Hidden by default */
+        }
+
+        .feedback.correct {
+            background-color: #d4edda;
+            color: var(--success-color);
+            border: 1px solid #c3e6cb;
+        }
+
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: var(--danger-color);
+            border: 1px solid #f5c6cb;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .navigation-buttons button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                max-height: 200px; /* Limit height for small screens */
+                padding-bottom: 0;
+            }
+            .sidebar h2 {
+                text-align: center;
+            }
+            .sidebar ul {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .sidebar ul li {
+                margin: 5px;
+            }
+            .sidebar ul li a {
+                padding: 8px 12px;
+                font-size: 0.9em;
+            }
+            .content-area {
+                padding: 15px;
+            }
+            header {
+                flex-direction: column;
+                text-align: center;
+                padding: 10px;
+            }
+            header img {
+                margin-bottom: 10px;
+                margin-right: 0;
+            }
+        }
+    </style>
+    <style>
+/* Agrega esto dentro de la etiqueta <style> */
+.nav-header-btn {
+    margin-left: 15px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    border: 1px solid var(--primary-color);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+.nav-header-btn:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 4px 16px rgba(0,123,255,0.15);
+    border-color: var(--primary-color);
+}
+@media (max-width: 768px) {
+    .nav-header-btn {
+        margin-left: 0 !important;
+        margin-top: 10px;
+        width: 90%;
+        display: block;
+    }
+}
+</style>
+</head>
+<body>
+    <header>
+        <img src="https://i.postimg.cc/mZzx20gW/Logosimbolo-SENA-PRINCIPAL.png" alt="Logo SENA">
+        <h1>Centro de Servicios y Gestión Empresarial</h1>
+        <a href="laboratorio.html" class="btn btn-nav nav-header-btn">Laboratorio</a>
+        <a href="cuestionario.html" class="btn btn-nav nav-header-btn">Cuestionario</a>
+    </header>
+
+    <div class="container">
+        <nav class="sidebar">
+            <h2>Temas de C# Básico</h2>
+            <ul id="lesson-list">
+                <!-- Lesson links will be populated here by JavaScript -->
+            </ul>
+        </nav>
+
+        <main class="content-area">
+            <!-- Lesson content will be loaded here dynamically -->
+        </main>
+    </div>
+
+    <script>
+        // Datos de las lecciones
+        const lessons = [
+            {
+                title: "1. Introducción a C#",
+                theory: `
+                    <h3>¿Qué es C#?</h3>
+                    <p>C# (pronunciado "C sharp") es un lenguaje de programación moderno, orientado a objetos, desarrollado por Microsoft. Es parte del ecosistema .NET y se utiliza para una amplia variedad de aplicaciones, desde aplicaciones de escritorio (Windows Forms, WPF), desarrollo web (ASP.NET), juegos (Unity), hasta aplicaciones móviles (Xamarin).</p>
+                    <p>Es un lenguaje fuertemente tipado, lo que significa que las variables deben tener un tipo de dato definido antes de usarse, lo que ayuda a prevenir errores.</p>
+
+                    <h3>¿Para qué sirve C#?</h3>
+                    <ul>
+                        <li><b>Desarrollo de Aplicaciones de Escritorio:</b> Creación de software para Windows.</li>
+                        <li><b>Desarrollo Web:</b> Construcción de sitios web y servicios web con ASP.NET.</li>
+                        <li><b>Desarrollo de Juegos:</b> Con el motor de juegos Unity 3D, C# es el lenguaje principal.</li>
+                        <li><b>Desarrollo Móvil:</b> Con Xamarin, puedes crear aplicaciones para iOS y Android usando C#.</li>
+                        <li><b>Computación en la Nube:</b> Para servicios en la nube de Azure.</li>
+                    </ul>
+
+                    <h3>Estructura Básica de un Programa C#</h3>
+                    <p>Todo programa C# comienza con un método <code>Main</code>, que es el punto de entrada de la aplicación. Aquí te mostramos la estructura más simple:</p>
+                    <pre><code class="language-csharp">
+using System; // Permite usar funcionalidades del sistema como Console.WriteLine
+
+namespace MiPrimerPrograma // Agrupa clases relacionadas
+{
+    class Program // Contenedor para los miembros de la clase (métodos, campos, etc.)
+    {
+        static void Main(string[] args) // El punto de entrada del programa
+        {
+            // Aquí va tu código
+            Console.WriteLine("¡Hola, Mundo desde C#!"); // Muestra texto en la consola
+        }
+    }
+}
+                    </code></pre>
+                    <p><b>Simulación de Salida de Consola del código anterior:</b></p>
+                    <div class="console-simulation">
+                        <p>¡Hola, Mundo desde C#!</p>
+                    </div>
+                `,
+                exercise: {
+                    question: "Escribe el código C# que imprima tu nombre en la consola. Usa un comentario para indicar que es tu nombre.",
+                    placeholder: "// Tu código aquí\nConsole.WriteLine(\"Tu Nombre\");",
+                    check: (input) => {
+                        input = input.toLowerCase();
+                        return input.includes("console.writeline") && input.includes("(") && input.includes(")") && input.includes(";") && input.includes("//");
+                    },
+                    solution: "Console.WriteLine(\"Mi Nombre\"); // Este es mi nombre"
+                }
+            },
+            {
+                title: "2. Variables y Tipos de Datos",
+                theory: `
+                    <h3>¿Qué son las Variables?</h3>
+                    <p>Una variable es un espacio de almacenamiento en la memoria de la computadora que se utiliza para guardar datos. Imagínalas como cajas con una etiqueta (nombre de la variable) donde puedes guardar diferentes tipos de cosas (el valor de la variable).</p>
+                    <p>En C#, antes de usar una variable, debes declararla especificando su <b>tipo de dato</b> y dándole un <b>nombre</b>. Opcionalmente, puedes asignarle un <b>valor inicial</b>.</p>
+                    <pre><code class="language-csharp">
+// Declaración de una variable (solo tipo y nombre)
+string nombre;
+
+// Asignación de un valor a la variable
+nombre = "Alicia";
+
+// Declaración e inicialización (en una sola línea)
+int edad = 30;
+                    </code></pre>
+
+                    <h3>Tipos de Datos Comunes</h3>
+                    <p>C# tiene varios tipos de datos para diferentes clases de información:</p>
+                    <ul>
+                        <li><b><code>int</code>:</b> Números enteros (ej. 10, -5, 1000).</li>
+                        <li><b><code>double</code>:</b> Números con punto decimal (ej. 3.14, 0.5, -12.75).</li>
+                        <li><b><code>string</code>:</b> Secuencias de caracteres (texto) (ej. "Hola", "C# es genial"). Siempre entre comillas dobles.</li>
+                        <li><b><code>char</code>:</b> Un solo carácter (ej. 'A', '7', '$'). Siempre entre comillas simples.</li>
+                        <li><b><code>bool</code>:</b> Valores booleanos (verdadero/falso) (<code>true</code> o <code>false</code>).</li>
+                    </ul>
+
+                    <h3>Demostración de Asignación y Uso</h3>
+                    <p>Veamos cómo se declaran, asignan y usan las variables:</p>
+                    <pre><code class="language-csharp">
+int puntos = 150;
+string mensaje = "¡Has ganado!";
+double precio = 99.99;
+bool esActivo = true;
+char inicial = 'J';
+
+Console.WriteLine("Puntos: " + puntos);
+Console.WriteLine("Mensaje: " + mensaje);
+Console.WriteLine("Precio: " + precio);
+Console.WriteLine("Está activo: " + esActivo);
+Console.WriteLine("Inicial: " + inicial);
+                    </code></pre>
+                    <p><b>Simulación de Salida de Consola:</b></p>
+                    <div class="console-simulation">
+                        <p>Puntos: 150</p>
+                        <p>Mensaje: ¡Has ganado!</p>
+                        <p>Precio: 99.99</p>
+                        <p>Está activo: True</p>
+                        <p>Inicial: J</p>
+                    </div>
+                `,
+                exercise: {
+                    question: "Declara una variable de tipo <code>double</code> llamada <code>pi</code> y asigna el valor <code>3.14159</code>. Luego, declara una variable <code>string</code> llamada <code>saludo</code> y asigna el texto 'Hola mundo'. Finalmente, imprime ambas variables en la consola.",
+                    placeholder: "// Tu código aquí",
+                    check: (input) => {
+                        input = input.toLowerCase();
+                        const hasPi = input.includes("double pi") && input.includes("3.14159");
+                        const hasSaludo = input.includes("string saludo") && input.includes("hola mundo");
+                        const printsPi = input.includes("console.writeline") && input.includes("pi)");
+                        const printsSaludo = input.includes("console.writeline") && input.includes("saludo)");
+                        return hasPi && hasSaludo && printsPi && printsSaludo;
+                    },
+                    solution: `double pi = 3.14159;
+string saludo = "Hola mundo";
+Console.WriteLine("Valor de Pi: " + pi);
+Console.WriteLine("Mensaje: " + saludo);`
+                }
+            },
+            {
+                title: "3. Operadores",
+                theory: `
+                    <h3>¿Qué son los Operadores?</h3>
+                    <p>Los operadores son símbolos especiales que le indican al compilador que realice operaciones matemáticas, lógicas o de manipulación de valores. En C#, hay varios tipos de operadores.</p>
+
+                    <h3>Operadores Aritméticos</h3>
+                    <p>Se utilizan para realizar cálculos matemáticos básicos:</p>
+                    <ul>
+                        <li><code>+</code> (Suma)</li>
+                        <li><code>-</code> (Resta)</li>
+                        <li><code>*</code> (Multiplicación)</li>
+                        <li><code>/</code> (División)</li>
+                        <li><code>%</code> (Módulo - devuelve el residuo de una división)</li>
+                    </ul>
+                    <pre><code class="language-csharp">
+int a = 10;
+int b = 3;
+
+Console.WriteLine("Suma: " + (a + b));     // 13
+Console.WriteLine("Resta: " + (a - b));    // 7
+Console.WriteLine("Multiplicación: " + (a * b)); // 30
+Console.WriteLine("División: " + (a / b));   // 3 (división entera)
+Console.WriteLine("Módulo: " + (a % b));    // 1
+                    </code></pre>
+
+                    <h3>Operadores de Asignación</h3>
+                    <p>Se utilizan para asignar un valor a una variable:</p>
+                    <ul>
+                        <li><code>=</code> (Asignación simple)</li>
+                        <li><code>+=</code> (Suma y asigna: <code>x += y</code> es igual a <code>x = x + y</code>)</li>
+                        <li><code>-=</code> (Resta y asigna)</li>
+                        <li><code>*=</code> (Multiplica y asigna)</li>
+                        <li><code>/=</code> (Divide y asigna)</li>
+                        <li><code>%=</code> (Módulo y asigna)</li>
+                    </ul>
+                    <pre><code class="language-csharp">
+int x = 5;
+x += 3; // x ahora es 8 (5 + 3)
+Console.WriteLine("x después de +=: " + x); // Salida: 8
+                    </code></pre>
+
+                    <h3>Operadores de Comparación (Relacionales)</h3>
+                    <p>Se utilizan para comparar dos valores y siempre devuelven un valor booleano (<code>true</code> o <code>false</code>):</p>
+                    <ul>
+                        <li><code>==</code> (Igual a)</li>
+                        <li><code>!=</code> (Diferente de)</li>
+                        <li><code>&lt;</code> (Menor que)</li>
+                        <li><code>&gt;</code> (Mayor que)</li>
+                        <li><code>&lt;=</code> (Menor o igual que)</li>
+                        <li><code>&gt;=</code> (Mayor o igual que)</li>
+                    </ul>
+                    <pre><code class="language-csharp">
+int num1 = 10;
+int num2 = 20;
+
+Console.WriteLine(num1 == num2); // false
+Console.WriteLine(num1 != num2); // true
+Console.WriteLine(num1 < num2);  // true
+Console.WriteLine(num1 >= num2); // false
+                    </code></pre>
+
+                    <h3>Operadores Lógicos</h3>
+                    <p>Se utilizan para combinar o negar expresiones booleanas y también devuelven <code>true</code> o <code>false</code>:</p>
+                    <ul>
+                        <li><code>&&</code> (AND lógico): Verdadero si ambas expresiones son verdaderas.</li>
+                        <li><code>||</code> (OR lógico): Verdadero si al menos una expresión es verdadera.</li>
+                        <li><code>!</code> (NOT lógico): Invierte el valor booleano.</li>
+                    </ul>
+                    <pre><code class="language-csharp">
+bool esMayor = true;
+bool tienePermiso = false;
+
+Console.WriteLine(esMayor && tienePermiso); // false (true AND false)
+Console.WriteLine(esMayor || tienePermiso); // true (true OR false)
+Console.WriteLine(!esMayor);              // false (NOT true)
+                    </code></pre>
+                `,
+                exercise: {
+                    question: "Dadas las variables <code>int num1 = 7;</code> y <code>int num2 = 2;</code>. Calcula el resultado de <code>num1 / num2</code> (división entera) y <code>num1 % num2</code>. Imprime ambos resultados en la consola.",
+                    placeholder: "int num1 = 7;\nint num2 = 2;\n// Tu código aquí para calcular e imprimir",
+                    check: (input) => {
+                        input = input.toLowerCase();
+                        const hasNum1 = input.includes("int num1 = 7");
+                        const hasNum2 = input.includes("int num2 = 2");
+                        const printsDivision = input.includes("console.writeline") && input.includes("num1 / num2");
+                        const printsModulo = input.includes("console.writeline") && input.includes("num1 % num2");
+                        return hasNum1 && hasNum2 && printsDivision && printsModulo;
+                    },
+                    solution: `int num1 = 7;
+int num2 = 2;
+Console.WriteLine("División: " + (num1 / num2));
+Console.WriteLine("Módulo: " + (num1 % num2));`
+                }
+            },
+            {
+                title: "4. Sentencias Condicionales",
+                theory: `
+                    <h3>¿Qué son las Sentencias Condicionales?</h3>
+                    <p>Las sentencias condicionales permiten que tu programa tome decisiones y ejecute diferentes bloques de código basándose en si una condición es verdadera o falsa. Son fundamentales para la lógica de cualquier aplicación.</p>
+
+                    <h3><code>if</code>, <code>else if</code>, <code>else</code></h3>
+                    <p>La estructura <code>if-else if-else</code> es la más común para manejar condiciones:</p>
+                    <ul>
+                        <li>El bloque <b><code>if</code></b> se ejecuta si su condición es verdadera.</li>
+                        <li>El bloque <b><code>else if</code></b> (opcional y puede haber varios) se evalúa si la condición del <code>if</code> anterior es falsa y si su propia condición es verdadera.</li>
+                        <li>El bloque <b><code>else</code></b> (opcional) se ejecuta si ninguna de las condiciones anteriores (<code>if</code> o <code>else if</code>) fue verdadera.</li>
+                    </ul>
+                    <pre><code class="language-csharp">
+int temperatura = 25;
+
+if (temperatura > 30)
+{
+    Console.WriteLine("¡Hace mucho calor!");
+}
+else if (temperatura > 20) // Esta condición se evalúa solo si temperatura NO es > 30
+{
+    Console.WriteLine("Hace una temperatura agradable.");
+}
+else
+{
+    Console.WriteLine("Hace frío.");
+}
+                    </code></pre>
+                    <p><b>Simulación de Salida de Consola (para <code>temperatura = 25</code>):</b></p>
+                    <div class="console-simulation">
+                        <p>Hace una temperatura agradable.</p>
+                    </div>
+
+                    <h3><code>switch</code></h3>
+                    <p>La sentencia <code>switch</code> es útil cuando tienes una variable que puede tener muchos valores posibles, y quieres ejecutar un código diferente para cada valor. Es una alternativa más limpia que muchos <code>else if</code> encadenados para casos específicos.</p>
+                    <pre><code class="language-csharp">
+char calificacion = 'B';
+
+switch (calificacion)
+{
+    case 'A':
+        Console.WriteLine("Excelente");
+        break; // Sale del switch
+    case 'B':
+        Console.WriteLine("Muy Bien");
+        break;
+    case 'C':
+        Console.WriteLine("Bien");
+        break;
+    default: // Se ejecuta si ningún caso coincide
+        Console.WriteLine("Necesitas mejorar");
+        break;
+}
+                    </code></pre>
+                    <p><b>Simulación de Salida de Consola (para <code>calificacion = 'B'</code>):</b></p>
+                    <div class="console-simulation">
+                        <p>Muy Bien</p>
+                    </div>
+                `,
+                exercise: {
+                    question: "Crea un programa que, dada una variable <code>int puntuacion = 85;</code>, imprima 'Aprobado' si la puntuación es 60 o más, y 'Reprobado' si es menor de 60. Usa una sentencia <code>if-else</code>.",
+                    placeholder: "int puntuacion = 85;\n// Tu código if-else aquí",
+                    check: (input) => {
+                        input = input.toLowerCase();
+                        const hasPuntuacion = input.includes("int puntuacion = 85");
+                        const hasIf = input.includes("if (puntuacion >= 60)");
+                        const hasElse = input.includes("else");
+                        const printsAprobado = input.includes("console.writeline(\"aprobado\")");
+                        const printsReprobado = input.includes("console.writeline(\"reprobado\")");
+                        return hasPuntuacion && hasIf && hasElse && printsAprobado && printsReprobado;
+                    },
+                    solution: `int puntuacion = 85;
+if (puntuacion >= 60)
+{
+    Console.WriteLine("Aprobado");
+}
+else
+{
+    Console.WriteLine("Reprobado");
+}`
+                }
+            },
+            {
+                title: "5. Bucles (Loops)",
+                theory: `
+                    <h3>¿Qué son los Bucles?</h3>
+                    <p>Los bucles (o ciclos) son estructuras de control que permiten repetir un bloque de código varias veces. Son esenciales cuando necesitas realizar la misma tarea repetidamente sin escribir el código una y otra vez.</p>
+
+                    <h3>Bucle <code>for</code></h3>
+                    <p>El bucle <code>for</code> se utiliza cuando sabes cuántas veces quieres que se repita el bloque de código. Tiene tres partes:</p>
+                    <ol>
+                        <li><b>Inicialización:</b> Se ejecuta una vez al principio (ej. <code>int i = 0;</code>).</li>
+                        <li><b>Condición:</b> Se evalúa antes de cada iteración. Si es verdadera, el bucle continúa; si es falsa, el bucle termina (ej. <code>i < 5;</code>).</li>
+                        <li><b>Iteración:</b> Se ejecuta después de cada iteración (ej. <code>i++</code> para incrementar).</li>
+                    </ol>
+                    <pre><code class="language-csharp">
+for (int i = 0; i < 5; i++) // Repite 5 veces (i = 0, 1, 2, 3, 4)
+{
+    Console.WriteLine("Iteración for número: " + (i + 1));
+}
+                    </code></pre>
+                    <p><b>Simulación de Salida de Consola:</b></p>
+                    <div class="console-simulation">
+                        <p>Iteración for número: 1</p>
+                        <p>Iteración for número: 2</p>
+                        <p>Iteración for número: 3</p>
+                        <p>Iteración for número: 4</p>
+                        <p>Iteración for número: 5</p>
+                    </div>
+
+                    <h3>Bucle <code>while</code></h3>
+                    <p>El bucle <code>while</code> se utiliza cuando no sabes cuántas veces se ejecutará el bucle de antemano, pero quieres que se repita mientras una condición específica sea verdadera.</p>
+                    <pre><code class="language-csharp">
+int contador = 0;
+while (contador < 3) // Repite mientras contador sea menor que 3
+{
+    Console.WriteLine("Iteración while número: " + (contador + 1));
+    contador++; // Importante: incrementar para evitar bucle infinito
+}
+                    </code></pre>
+                    <p><b>Simulación de Salida de Consola:</b></p>
+                    <div class="console-simulation">
+                        <p>Iteración while número: 1</p>
+                        <p>Iteración while número: 2</p>
+                        <p>Iteración while número: 3</p>
+                    </div>
+
+                    <h3>Bucle <code>do-while</code></h3>
+                    <p>Similar a <code>while</code>, pero garantiza que el bloque de código se ejecute al menos una vez, ya que la condición se evalúa al final del bucle.</p>
+                    <pre><code class="language-csharp">
+int k = 0;
+do
+{
+    Console.WriteLine("Iteración do-while número: " + (k + 1));
+    k++;
+} while (k < 2); // La condición se verifica después de la primera ejecución
+                    </code></pre>
+                    <p><b>Simulación de Salida de Consola:</b></p>
+                    <div class="console-simulation">
+                        <p>Iteración do-while número: 1</p>
+                        <p>Iteración do-while número: 2</p>
+                    </div>
+                `,
+                exercise: {
+                    question: "Utiliza un bucle <code>for</code> para imprimir los números del 1 al 5 en la consola, cada uno en una nueva línea.",
+                    placeholder: "// Tu bucle for aquí",
+                    check: (input) => {
+                        input = input.toLowerCase();
+                        const hasFor = input.includes("for (");
+                        const printsCorrectly = input.includes("console.writeline") && (input.includes("i + 1") || input.includes("i"));
+                        // A more robust check might actually simulate the loop output
+                        // For simplicity, we'll check for basic structure
+                        const hasLoopCondition = input.includes("i < 5") || input.includes("i <= 5");
+                        const hasIncrement = input.includes("i++");
+                        return hasFor && printsCorrectly && hasLoopCondition && hasIncrement;
+                    },
+                    solution: `for (int i = 1; i <= 5; i++)
+{
+    Console.WriteLine(i);
+}`
+                }
+            }
+        ];
+
+        let currentLessonIndex = 0;
+        const lessonList = document.getElementById('lesson-list');
+        const contentArea = document.querySelector('.content-area');
+
+        function createLessonLink(lesson, index) {
+            const listItem = document.createElement('li');
+            const link = document.createElement('a');
+            link.href = '#';
+            link.textContent = lesson.title;
+            link.dataset.index = index;
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                loadLesson(index);
+            });
+            listItem.appendChild(link);
+            return listItem;
+        }
+
+        function loadLesson(index) {
+            if (index < 0 || index >= lessons.length) {
+                return; // Prevent out-of-bounds access
+            }
+
+            currentLessonIndex = index;
+            const lesson = lessons[currentLessonIndex];
+
+            // Clear previous content
+            contentArea.innerHTML = '';
+
+            // Create lesson section
+            const lessonSection = document.createElement('div');
+            lessonSection.classList.add('lesson-section', 'active'); // Always active for current lesson
+
+            lessonSection.innerHTML = `
+                <h2>${lesson.title}</h2>
+                <div class="theory-content">
+                    ${lesson.theory}
+                </div>
+                <div class="exercise-area">
+                    <h3>Ejercicio Práctico</h3>
+                    <p>${lesson.exercise.question}</p>
+                    <textarea id="code-input" placeholder="${lesson.exercise.placeholder}"></textarea>
+                    <button class="btn btn-check" onclick="checkExercise()">Verificar Código</button>
+                    <button class="btn btn-nav" onclick="showSolution()">Mostrar Solución</button>
+                    <div id="feedback" class="feedback"></div>
+                </div>
+                <div class="navigation-buttons">
+                    <button class="btn btn-nav" onclick="navigateLesson(-1)" ${currentLessonIndex === 0 ? 'disabled' : ''}>Anterior</button>
+                    <button class="btn btn-nav" onclick="navigateLesson(1)" ${currentLessonIndex === lessons.length - 1 ? 'disabled' : ''}>Siguiente</button>
+                </div>
+            `;
+            contentArea.appendChild(lessonSection);
+
+            // Update active state in sidebar
+            document.querySelectorAll('#lesson-list a').forEach((link) => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`#lesson-list a[data-index="${index}"]`).classList.add('active');
+
+            // Scroll to top of content area
+            contentArea.scrollTop = 0;
+        }
+
+        function checkExercise() {
+            const codeInput = document.getElementById('code-input');
+            const feedbackDiv = document.getElementById('feedback');
+            const userInput = codeInput.value;
+            const currentExercise = lessons[currentLessonIndex].exercise;
+
+            if (currentExercise.check(userInput)) {
+                feedbackDiv.textContent = "¡Correcto! Has resuelto el ejercicio.";
+                feedbackDiv.classList.remove('incorrect');
+                feedbackDiv.classList.add('correct');
+            } else {
+                feedbackDiv.textContent = "Incorrecto. Revisa tu código o intenta de nuevo. Lee la pregunta con atención.";
+                feedbackDiv.classList.remove('correct');
+                feedbackDiv.classList.add('incorrect');
+            }
+            feedbackDiv.style.display = 'block';
+        }
+
+        function showSolution() {
+            const codeInput = document.getElementById('code-input');
+            const feedbackDiv = document.getElementById('feedback');
+            const currentExercise = lessons[currentLessonIndex].exercise;
+            
+            codeInput.value = currentExercise.solution;
+            feedbackDiv.textContent = "Aquí tienes la solución. Intenta entenderla y luego escríbela tú mismo.";
+            feedbackDiv.classList.remove('correct');
+            feedbackDiv.classList.add('info'); /* Using a class that doesn't exist but signals a neutral state */
+            feedbackDiv.style.backgroundColor = 'var(--info-color)';
+            feedbackDiv.style.color = 'white';
+            feedbackDiv.style.display = 'block';
+        }
+
+        function navigateLesson(direction) {
+            loadLesson(currentLessonIndex + direction);
+        }
+
+        // Initialize the guide
+        document.addEventListener('DOMContentLoaded', () => {
+            lessons.forEach((lesson, index) => {
+                lessonList.appendChild(createLessonLink(lesson, index));
+            });
+            loadLesson(0); // Load the first lesson
+        });
+    </script>
+</body>
+</html>

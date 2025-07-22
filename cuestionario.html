@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuestionario Interactivo C#</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .header-bar {
+            background-color: #212529; /* Color oscuro similar al logo del SENA */
+            color: white;
+            padding: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start; /* Alinear contenido al inicio */
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .header-bar img {
+            height: 50px; /* Ajustar altura de la imagen */
+            margin-left: 20px;
+            margin-right: 15px;
+        }
+        .header-bar h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        .quiz-container {
+            max-width: 800px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            padding: 25px;
+            border-radius: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0,0,0,.1);
+        }
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #343a40;
+            margin-bottom: 25px;
+        }
+        .option-button {
+            width: 100%;
+            text-align: left;
+            margin-bottom: 12px;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,.05);
+            border: 1px solid #ced4da;
+            background-color: #e9ecef;
+            color: #495057;
+        }
+        .option-button:hover:not(.disabled) {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,.1);
+        }
+        /* Estilos para las opciones cuando ya se ha respondido */
+        .option-button.selected {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        .option-button.correct {
+            background-color: #28a745; /* Verde para respuesta correcta */
+            color: white;
+            border-color: #28a745;
+        }
+        .option-button.incorrect {
+            background-color: #dc3545; /* Rojo para respuesta incorrecta */
+            color: white;
+            border-color: #dc3545;
+        }
+        .feedback-area {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        .feedback-correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .feedback-incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .next-btn {
+            margin-top: 30px;
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            border-radius: 8px;
+        }
+        .quiz-completion {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #007bff;
+            margin-top: 40px;
+        }
+        .quiz-score {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #28a745;
+            margin-top: 20px;
+        }
+        .restart-btn {
+            margin-top: 30px;
+            padding: 10px 25px;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header-bar">
+        <img src="https://i.post.cc/mZzx20gW/Logosimbolo-SENA-PRINCIPAL.png" alt="Logo SENA">
+        <h1>Centro de Servicios y Gestión Empresarial</h1>
+    </header>
+
+    <main class="container quiz-container">
+        <div id="quiz-screen">
+            <h2 class="question-text" id="question-text"></h2>
+            <div id="options-container" class="d-grid gap-2">
+                <!-- Las opciones se cargarán aquí mediante JavaScript -->
+            </div>
+            <div id="feedback-area" class="feedback-area d-none">
+                <!-- La retroalimentación se mostrará aquí -->
+            </div>
+            <button id="next-button" class="btn btn-primary next-btn w-100 mt-4" disabled>Siguiente Pregunta</button>
+        </div>
+
+        <div id="result-screen" class="d-none">
+            <div class="quiz-completion">¡Cuestionario Completado!</div>
+            <div class="quiz-score text-center">Tu puntaje: <span id="final-score">0</span>/10</div>
+            <div class="text-center mt-4">
+                <button id="restart-button" class="btn btn-success restart-btn">Reiniciar Cuestionario</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eP0Q+1xT" crossorigin="anonymous"></script>
+
+    <script>
+        const questions = [
+            {
+                question: "¿Cuál es el entorno principal de tiempo de ejecución para aplicaciones C#?",
+                options: ["JVM", "Node.js", "CLR", "Python Interpreter"],
+                correctAnswerIndex: 2,
+                justification: "El Common Language Runtime (CLR) es el componente principal del .NET Framework y .NET Core que gestiona la ejecución de programas C# y otros lenguajes compatibles con .NET."
+            },
+            {
+                question: "¿Qué tipo de lenguaje de programación es C# principalmente?",
+                options: ["Procedural", "Funcional", "Basado en Scripting", "Orientado a Objetos"],
+                correctAnswerIndex: 3,
+                justification: "C# es un lenguaje de programación moderno, orientado a objetos, desarrollado por Microsoft. Soporta todos los principios de la programación orientada a objetos: encapsulación, herencia, polimorfismo y abstracción."
+            },
+            {
+                question: "¿Cuál de las siguientes palabras clave se utiliza para importar un espacio de nombres en C#?",
+                options: ["import", "namespace", "using", "include"],
+                correctAnswerIndex: 2,
+                justification: "La palabra clave `using` se utiliza en C# para importar espacios de nombres, lo que permite usar los tipos definidos en ese espacio de nombres sin especificar su nombre completo."
+            },
+            {
+                question: "¿Qué tipo de dato es un tipo por valor en C#?",
+                options: ["String", "Array", "Class", "Struct"],
+                correctAnswerIndex: 3,
+                justification: "En C#, los `struct` (estructuras) son tipos por valor, mientras que `String`, `Array` y `Class` son tipos por referencia. Los tipos por valor almacenan su valor directamente en la memoria, mientras que los tipos por referencia almacenan una referencia a la ubicación de memoria del valor."
+            },
+            {
+                question: "¿Qué modificador de acceso permite que un miembro sea accesible solo dentro de su propia clase?",
+                options: ["public", "protected", "internal", "private"],
+                correctAnswerIndex: 3,
+                justification: "El modificador de acceso `private` restringe el acceso a los miembros a solo dentro de la clase donde están declarados. `public` permite acceso desde cualquier lugar, `protected` permite acceso dentro de la clase y sus clases derivadas, e `internal` permite acceso dentro del mismo ensamblado."
+            },
+            {
+                question: "¿Qué bloque de una declaración `try-catch-finally` garantiza que el código se ejecutará siempre, independientemente de si ocurre una excepción?",
+                options: ["try", "catch", "finally", "except"],
+                correctAnswerIndex: 2,
+                justification: "El bloque `finally` se utiliza para ejecutar código de limpieza que debe ejecutarse independientemente de si se lanzó o no una excepción en el bloque `try` o si fue manejada por un bloque `catch`."
+            },
+            {
+                question: "¿Cómo se implementa la herencia de una clase `Padre` por una clase `Hijo` en C#?",
+                options: ["class Hijo implements Padre {}", "class Hijo extends Padre {}", "class Hijo : Padre {}", "class Hijo inherits Padre {}"],
+                correctAnswerIndex: 2,
+                justification: "En C#, la herencia se indica usando dos puntos (:) después del nombre de la clase derivada, seguido del nombre de la clase base, por ejemplo, `class Hijo : Padre {}`."
+            },
+            {
+                question: "¿Cuál es el propósito del operador de fusión nula (??) en C#?",
+                options: ["Comprobar si un valor es nulo y lanzar una excepción", "Asignar un valor por defecto si una expresión es nula", "Combinar dos cadenas nulas", "Realizar una operación lógica OR nula"],
+                correctAnswerIndex: 1,
+                justification: "El operador de fusión nula `??` se utiliza para definir un valor por defecto que será asignado a una variable si la expresión de la izquierda es nula. Por ejemplo, `resultado = variable ?? valorPorDefecto;`."
+            },
+            {
+                question: "¿Qué tipo de bucle es el más adecuado para iterar sobre elementos en una colección (como una `List` o `Array`) sin modificar la colección durante la iteración?",
+                options: ["for", "while", "do-while", "foreach"],
+                correctAnswerIndex: 3,
+                justification: "El bucle `foreach` está diseñado específicamente para iterar sobre los elementos de colecciones que implementan `IEnumerable` o `IEnumerable<T>`, proporcionando una forma concisa y segura de acceder a cada elemento sin preocuparse por los índices."
+            },
+            {
+                question: "¿Cuál de los siguientes NO es un concepto fundamental de la Programación Orientada a Objetos (POO)?",
+                options: ["Encapsulación", "Herencia", "Polimorfismo", "Modularización"],
+                correctAnswerIndex: 3,
+                justification: "Aunque la modularización es una práctica de diseño de software importante, no se considera uno de los cuatro pilares fundamentales de la POO. Los cuatro pilares son Encapsulación, Herencia, Polimorfismo y Abstracción."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answeredCurrentQuestion = false; // Bandera para evitar responder varias veces la misma pregunta
+
+        // Obtener referencias a elementos del DOM
+        const questionTextElement = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const feedbackArea = document.getElementById('feedback-area');
+        const nextButton = document.getElementById('next-button');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const finalScoreSpan = document.getElementById('final-score');
+        const restartButton = document.getElementById('restart-button');
+
+        /**
+         * Carga y muestra la pregunta actual junto con sus opciones.
+         * Reinicia el estado de retroalimentación y botones.
+         */
+        function loadQuestion() {
+            if (currentQuestionIndex < questions.length) {
+                const q = questions[currentQuestionIndex];
+                questionTextElement.textContent = `${currentQuestionIndex + 1}. ${q.question}`;
+                optionsContainer.innerHTML = ''; // Limpiar opciones anteriores
+                feedbackArea.classList.add('d-none'); // Ocultar retroalimentación
+                feedbackArea.innerHTML = ''; // Limpiar contenido de retroalimentación
+                nextButton.disabled = true; // Deshabilitar botón "Siguiente"
+                answeredCurrentQuestion = false; // Permitir responder la pregunta actual
+
+                q.options.forEach((option, index) => {
+                    const button = document.createElement('button');
+                    button.textContent = option;
+                    button.classList.add('btn', 'btn-outline-primary', 'option-button');
+                    // Asignar manejador de evento para verificar la respuesta
+                    button.onclick = () => checkAnswer(index);
+                    optionsContainer.appendChild(button);
+                });
+            } else {
+                showResultScreen(); // Mostrar pantalla de resultados si no hay más preguntas
+            }
+        }
+
+        /**
+         * Verifica la respuesta seleccionada por el usuario.
+         * Muestra retroalimentación (correcta/incorrecta) y justificación.
+         * Actualiza el puntaje y el estado del botón "Siguiente".
+         * @param {number} selectedIndex - El índice de la opción seleccionada por el usuario.
+         */
+        function checkAnswer(selectedIndex) {
+            if (answeredCurrentQuestion) return; // Evitar que el usuario responda más de una vez
+
+            answeredCurrentQuestion = true;
+            const q = questions[currentQuestionIndex];
+            const optionButtons = optionsContainer.querySelectorAll('.option-button');
+
+            // Deshabilitar todas las opciones para evitar más clics
+            optionButtons.forEach(button => {
+                button.disabled = true;
+                button.classList.remove('btn-outline-primary'); // Remover estilo de contorno para el feedback
+            });
+
+            // Resaltar la opción seleccionada y marcar correcta/incorrecta
+            if (selectedIndex === q.correctAnswerIndex) {
+                score++;
+                optionButtons[selectedIndex].classList.add('correct');
+                feedbackArea.classList.remove('feedback-incorrect');
+                feedbackArea.classList.add('feedback-correct');
+                feedbackArea.innerHTML = `<strong>¡Correcto!</strong><br>${q.justification}`;
+            } else {
+                optionButtons[selectedIndex].classList.add('incorrect');
+                optionButtons[q.correctAnswerIndex].classList.add('correct'); // Mostrar la respuesta correcta
+                feedbackArea.classList.remove('feedback-correct');
+                feedbackArea.classList.add('feedback-incorrect');
+                feedbackArea.innerHTML = `<strong>¡Incorrecto!</strong> La respuesta correcta era: <i>"${q.options[q.correctAnswerIndex]}"</i>.<br>${q.justification}`;
+            }
+
+            feedbackArea.classList.remove('d-none'); // Mostrar el área de retroalimentación
+            nextButton.disabled = false; // Habilitar el botón "Siguiente"
+            // Cambiar texto del botón si es la última pregunta
+            nextButton.textContent = (currentQuestionIndex === questions.length - 1) ? 'Finalizar Cuestionario' : 'Siguiente Pregunta';
+        }
+
+        /**
+         * Avanza a la siguiente pregunta o finaliza el cuestionario.
+         */
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResultScreen(); // Mostrar pantalla de resultados
+            }
+        }
+
+        /**
+         * Muestra la pantalla final con el puntaje obtenido.
+         */
+        function showResultScreen() {
+            quizScreen.classList.add('d-none');
+            resultScreen.classList.remove('d-none');
+            finalScoreSpan.textContent = score;
+        }
+
+        /**
+         * Reinicia el cuestionario a su estado inicial.
+         */
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            quizScreen.classList.remove('d-none');
+            resultScreen.classList.add('d-none');
+            loadQuestion();
+        }
+
+        // Asignar Event Listeners
+        nextButton.addEventListener('click', nextQuestion);
+        restartButton.addEventListener('click', restartQuiz);
+
+        // Cargar la primera pregunta cuando el DOM esté completamente cargado
+        document.addEventListener('DOMContentLoaded', loadQuestion);
+    </script>
+</body>
+</html>

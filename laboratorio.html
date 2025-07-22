@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio de C# Básico</title>
+    <style>
+        /* Estilos CSS generales */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Barra de encabezado */
+        #header-bar {
+            background-color: #004488; /* Color azul oscuro, similar al del logo SENA */
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            position: sticky; /* Permanece en la parte superior al hacer scroll */
+            top: 0;
+            z-index: 1000;
+        }
+
+        #header-bar img {
+            height: 50px; /* Altura del logo */
+            margin-right: 15px;
+        }
+
+        #header-bar span {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        /* Contenedor principal del laboratorio */
+        .container {
+            display: flex;
+            flex: 1; /* Permite que el contenedor ocupe el espacio restante */
+            max-width: 1200px;
+            margin: 20px auto;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden; /* Para manejar el desbordamiento interno si es necesario */
+        }
+
+        /* Barra lateral de navegación */
+        .sidebar {
+            width: 250px;
+            background-color: #e0eaff; /* Azul claro para la barra lateral */
+            padding: 20px;
+            border-right: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sidebar h2 {
+            color: #004488;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .sidebar button {
+            display: block;
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border: none;
+            background-color: #0056b3; /* Azul medio para botones */
+            color: white;
+            text-align: left;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar button:hover {
+            background-color: #003d82; /* Azul más oscuro al pasar el ratón */
+        }
+
+        .sidebar button.active {
+            background-color: #002a5c; /* Azul aún más oscuro para el botón activo */
+            font-weight: bold;
+        }
+
+        /* Área de contenido principal */
+        .content-area {
+            flex-grow: 1; /* Ocupa el espacio restante horizontalmente */
+            padding: 20px 30px;
+            overflow-y: auto; /* Permite el scroll vertical si el contenido desborda */
+        }
+
+        .module-section {
+            display: none; /* Oculto por defecto */
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .module-section.active {
+            display: block; /* Muestra la sección activa */
+        }
+
+        .module-section h3 {
+            color: #004488;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .module-section p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        /* Ejemplos de código */
+        .code-example {
+            background-color: #f0f0f0;
+            border-left: 5px solid #007bff; /* Borde azul claro */
+            padding: 15px;
+            margin: 20px 0;
+            font-family: 'Consolas', 'Courier New', monospace;
+            white-space: pre-wrap; /* Mantiene saltos de línea y espacios */
+            word-wrap: break-word; /* Rompe palabras largas */
+            font-size: 0.95em;
+        }
+
+        /* Secciones de simulación y ejercicio */
+        .simulation, .exercise {
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .simulation h4, .exercise h4 {
+            color: #0056b3;
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .input-group {
+            margin-top: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .input-group input[type="text"],
+        .input-group textarea {
+            width: calc(100% - 22px); /* Ancho completo menos padding y borde */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+
+        .input-group textarea {
+            min-height: 120px;
+            resize: vertical; /* Permite redimensionar verticalmente */
+        }
+
+        .input-group button {
+            background-color: #28a745; /* Verde para los botones de verificar/comprobar */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+        .input-group button:hover {
+            background-color: #218838; /* Verde más oscuro al pasar el ratón */
+        }
+
+        /* Retroalimentación */
+        .feedback {
+            margin-top: 15px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: none; /* Oculto por defecto */
+        }
+
+        .feedback.correct {
+            background-color: #d4edda; /* Verde claro */
+            color: #155724; /* Verde oscuro */
+            border: 1px solid #c3e6cb;
+        }
+
+        .feedback.incorrect {
+            background-color: #f8d7da; /* Rojo claro */
+            color: #721c24; /* Rojo oscuro */
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Ajustes responsivos */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column; /* Coloca los elementos en columna en pantallas pequeñas */
+                margin: 10px;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #ddd;
+                padding: 15px;
+            }
+
+            .sidebar button {
+                margin-bottom: 5px;
+            }
+
+            #header-bar {
+                flex-direction: column;
+                text-align: center;
+                padding: 10px;
+            }
+            #header-bar img {
+                margin-right: 0;
+                margin-bottom: 5px;
+            }
+            #header-bar span {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="header-bar">
+        <img src="https://i.postimg.cc/mZzx20gW/Logosimbolo-SENA-PRINCIPAL.png" alt="Logo SENA">
+        <span>Centro de Servicios y Gestión Empresarial</span>
+    </div>
+
+    <div class="container">
+        <aside class="sidebar">
+            <h2>Módulos C# Básico</h2>
+            <button class="module-btn active" data-module="intro">1. Introducción y Salida</button>
+            <button class="module-btn" data-module="variables">2. Variables y Tipos de Datos</button>
+            <button class="module-btn" data-module="conditionals">3. Condicionales (if/else)</button>
+            <button class="module-btn" data-module="loops">4. Bucles (for/while)</button>
+            <button class="module-btn" data-module="methods">5. Métodos Básicos</button>
+        </aside>
+
+        <main class="content-area">
+            <!-- Módulo 1: Introducción y Salida por Consola -->
+            <section id="intro" class="module-section active">
+                <h3>1. Introducción y Salida por Consola</h3>
+                <p>En este módulo, aprenderás los conceptos básicos de C# y cómo mostrar información en la consola usando <code>Console.WriteLine()</code>.</p>
+                
+                <h4>Sintaxis Básica de un programa C#:</h4>
+                <div class="code-example">
+                    <code>
+using System;<br>
+<br>
+namespace MiPrimerApp<br>
+{<br>
+    class Programa<br>
+    {<br>
+        static void Main(string[] args)<br>
+        {<br>
+            // Tu código va aquí<br>
+        }<br>
+    }<br>
+}
+                    </code>
+                </div>
+                <p>La función <code>Console.WriteLine()</code> se usa para imprimir texto y/o el valor de variables en la consola. Después de imprimir, añade un salto de línea.</p>
+
+                <div class="simulation">
+                    <h4>Simulación Interactiva: Salida por Consola</h4>
+                    <p>Considera el siguiente código C#. ¿Qué mostrará en la consola?</p>
+                    <div class="code-example">
+                        <code>Console.WriteLine("Hola, Mundo en C#!");</code>
+                    </div>
+                    <div class="input-group">
+                        <label for="sim1-output">Tu respuesta:</label>
+                        <input type="text" id="sim1-output" placeholder="Escribe la salida esperada">
+                        <button onclick="checkSim1()">Verificar</button>
+                        <div id="sim1-feedback" class="feedback"></div>
+                    </div>
+                </div>
+
+                <div class="exercise">
+                    <h4>Ejercicio Práctico: Tu Primera Línea de Código</h4>
+                    <p>Escribe el código C# necesario para imprimir el siguiente mensaje en la consola: <strong>"¡Soy un programador C#!"</strong></p>
+                    <div class="input-group">
+                        <label for="ex1-code">Tu código C#:</label>
+                        <textarea id="ex1-code" placeholder="Escribe tu código aquí..."></textarea>
+                        <button onclick="checkEx1()">Comprobar Código</button>
+                        <div id="ex1-feedback" class="feedback"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Módulo 2: Variables y Tipos de Datos -->
+            <section id="variables" class="module-section">
+                <h3>2. Variables y Tipos de Datos</h3>
+                <p>Las variables son contenedores para almacenar valores de datos. En C#, debes especificar el tipo de dato de la variable. Los tipos comunes incluyen <code>int</code> (enteros), <code>double</code> (números decimales), <code>string</code> (texto), y <code>bool</code> (verdadero/falso).</p>
+                
+                <h4>Declaración y Asignación:</h4>
+                <div class="code-example">
+                    <code>
+int edad = 30;<br>
+string nombre = "Ana";<br>
+double precio = 19.99;<br>
+bool activo = true;
+                    </code>
+                </div>
+                <p>Puedes imprimir el valor de las variables usando <code>Console.WriteLine()</code>.</p>
+
+                <div class="simulation">
+                    <h4>Simulación Interactiva: Valores de Variables</h4>
+                    <p>Observa el siguiente código. ¿Qué valor tendrá la variable <code>mensajeCompleto</code> al final?</p>
+                    <div class="code-example">
+                        <code>
+string saludo = "Hola, ";<br>
+string nombre = "Pedro";<br>
+string mensajeCompleto = saludo + nombre + "!";<br>
+Console.WriteLine(mensajeCompleto);
+                        </code>
+                    </div>
+                    <div class="input-group">
+                        <label for="sim2-output">Tu respuesta (valor de mensajeCompleto):</label>
+                        <input type="text" id="sim2-output" placeholder="Escribe el valor">
+                        <button onclick="checkSim2()">Verificar</button>
+                        <div id="sim2-feedback" class="feedback"></div>
+                    </div>
+                </div>
+
+                <div class="exercise">
+                    <h4>Ejercicio Práctico: Declara y Muestra</h4>
+                    <p>Declara una variable entera llamada <code>cantidad</code> y asígnale el valor <code>150</code>. Luego, declara una variable de tipo string llamada <code>producto</code> y asígnale el valor <code>"Lapices"</code>. Finalmente, imprime ambas variables en la consola en una sola línea, por ejemplo: <strong>"Tienes 150 Lapices."</strong></p>
+                    <div class="input-group">
+                        <label for="ex2-code">Tu código C#:</label>
+                        <textarea id="ex2-code" placeholder="Escribe tu código aquí..."></textarea>
+                        <button onclick="checkEx2()">Comprobar Código</button>
+                        <div id="ex2-feedback" class="feedback"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Módulo 3: Condicionales (if/else) -->
+            <section id="conditionals" class="module-section">
+                <h3>3. Condicionales (if/else)</h3>
+                <p>Las declaraciones condicionales te permiten ejecutar diferentes bloques de código según si una condición es verdadera o falsa.</p>
+                
+                <h4>Sintaxis de <code>if</code> y <code>else</code>:</h4>
+                <div class="code-example">
+                    <code>
+int puntuacion = 75;<br>
+<br>
+if (puntuacion >= 60)<br>
+{<br>
+    Console.WriteLine("Aprobado");<br>
+}<br>
+else<br>
+{<br>
+    Console.WriteLine("Reprobado");<br>
+}
+                    </code>
+                </div>
+
+                <div class="simulation">
+                    <h4>Simulación Interactiva: ¿Qué Imprime el Código?</h4>
+                    <p>Si la variable <code>temperatura</code> es <strong>28</strong>, ¿qué imprimirá el siguiente código?</p>
+                    <div class="code-example">
+                        <code>
+int temperatura = 28;<br>
+if (temperatura > 30)<br>
+{<br>
+    Console.WriteLine("Hace mucho calor!");<br>
+}<br>
+else if (temperatura > 20)<br>
+{<br>
+    Console.WriteLine("Temperatura agradable.");<br>
+}<br>
+else<br>
+{<br>
+    Console.WriteLine("Hace frío.");<br>
+}
+                        </code>
+                    </div>
+                    <div class="input-group">
+                        <label for="sim3-output">Tu respuesta:</label>
+                        <input type="text" id="sim3-output" placeholder="Salida esperada">
+                        <button onclick="checkSim3()">Verificar</button>
+                        <div id="sim3-feedback" class="feedback"></div>
+                    </div>
+                </div>
+
+                <div class="exercise">
+                    <h4>Ejercicio Práctico: Clasificador de Números</h4>
+                    <p>Escribe un bloque de código C# que declare una variable entera <code>numero</code> y le asigne el valor <code>-5</code>. Luego, usando <code>if</code>, <code>else if</code> y <code>else</code>, imprime: <br/>- <strong>"Positivo"</strong> si el número es mayor que 0.<br/>- <strong>"Negativo"</strong> si el número es menor que 0.<br/>- <strong>"Cero"</strong> si el número es igual a 0.</p>
+                    <div class="input-group">
+                        <label for="ex3-code">Tu código C#:</label>
+                        <textarea id="ex3-code" placeholder="Escribe tu código aquí..."></textarea>
+                        <button onclick="checkEx3()">Comprobar Código</button>
+                        <div id="ex3-feedback" class="feedback"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Módulo 4: Bucles (for/while) -->
+            <section id="loops" class="module-section">
+                <h3>4. Bucles (for/while)</h3>
+                <p>Los bucles se utilizan para ejecutar repetidamente un bloque de código. Los bucles <code>for</code> son ideales cuando sabes cuántas veces quieres que se repita el bucle. Los bucles <code>while</code> son buenos cuando quieres que el bucle continúe mientras una condición sea verdadera.</p>
+                
+                <h4>Ejemplo de Bucle <code>for</code>:</h4>
+                <div class="code-example">
+                    <code>
+for (int i = 0; i < 3; i++)<br>
+{<br>
+    Console.WriteLine("Iteración: " + i);<br>
+}
+                    </code>
+                </div>
+                <h4>Ejemplo de Bucle <code>while</code>:</h4>
+                <div class="code-example">
+                    <code>
+int contador = 0;<br>
+while (contador < 3)<br>
+{<br>
+    Console.WriteLine("Contando: " + contador);<br>
+    contador++;<br>
+}
+                    </code>
+                </div>
+
+                <div class="simulation">
+                    <h4>Simulación Interactiva: Resultado del Bucle</h4>
+                    <p>¿Qué imprimirá el siguiente bucle <code>for</code> en la consola?</p>
+                    <div class="code-example">
+                        <code>
+for (int j = 1; j <= 4; j++)<br>
+{<br>
+    Console.WriteLine("Número " + j);<br>
+}
+                        </code>
+                    </div>
+                    <div class="input-group">
+                        <label for="sim4-output">Tu respuesta (separada por saltos de línea):</label>
+                        <textarea id="sim4-output" placeholder="Ej:&#10;Línea 1&#10;Línea 2"></textarea>
+                        <button onclick="checkSim4()">Verificar</button>
+                        <div id="sim4-feedback" class="feedback"></div>
+                    </div>
+                </div>
+
+                <div class="exercise">
+                    <h4>Ejercicio Práctico: Contador Descendente</h4>
+                    <p>Escribe un bucle <code>while</code> que imprima los números del 5 al 1 (descendente), y después imprima "¡Despegue!".</p>
+                    <p>La salida esperada sería:</p>
+                    <div class="code-example">
+                        <code>
+5<br>
+4<br>
+3<br>
+2<br>
+1<br>
+¡Despegue!
+                        </code>
+                    </div>
+                    <div class="input-group">
+                        <label for="ex4-code">Tu código C#:</label>
+                        <textarea id="ex4-code" placeholder="Escribe tu código aquí..."></textarea>
+                        <button onclick="checkEx4()">Comprobar Código</button>
+                        <div id="ex4-feedback" class="feedback"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Módulo 5: Métodos Básicos -->
+            <section id="methods" class="module-section">
+                <h3>5. Métodos Básicos</h3>
+                <p>Los métodos (también llamadas funciones) son bloques de código que realizan una tarea específica. Ayudan a organizar el código y a hacerlo reutilizable.</p>
+                
+                <h4>Sintaxis de un Método Básico:</h4>
+                <div class="code-example">
+                    <code>
+public class MiClase<br>
+{<br>
+    // Método sin parámetros ni valor de retorno<br>
+    public void Saludar()<br>
+    {<br>
+        Console.WriteLine("¡Hola desde el método!");<br>
+    }<br>
+<br>
+    // Método con parámetro<br>
+    public void MostrarNombre(string nombre)<br>
+    {<br>
+        Console.WriteLine("Mi nombre es: " + nombre);<br>
+    }<br>
+<br>
+    // Método con valor de retorno<br>
+    public int Sumar(int a, int b)<br>
+    {<br>
+        return a + b;<br>
+    }<br>
+}<br>
+<br>
+// Para llamar a un método desde Main (dentro de la misma clase o instanciando un objeto):<br>
+// MiClase obj = new MiClase();<br>
+// obj.Saludar();<br>
+// obj.MostrarNombre("Luis");<br>
+// int resultado = obj.Sumar(5, 3);
+                    </code>
+                </div>
+
+                <div class="simulation">
+                    <h4>Simulación Interactiva: Llamada a Métodos</h4>
+                    <p>Observa el siguiente código. Si llamamos a <code>Calculadora.Multiplicar(4, 5)</code>, ¿qué valor se devolverá?</p>
+                    <div class="code-example">
+                        <code>
+public class Calculadora<br>
+{<br>
+    public int Multiplicar(int num1, int num2)<br>
+    {<br>
+        return num1 * num2;<br>
+    }<br>
+}
+                        </code>
+                    </div>
+                    <div class="input-group">
+                        <label for="sim5-output">Tu respuesta:</label>
+                        <input type="text" id="sim5-output" placeholder="Valor de retorno">
+                        <button onclick="checkSim5()">Verificar</button>
+                        <div id="sim5-feedback" class="feedback"></div>
+                    </div>
+                </div>
+
+                <div class="exercise">
+                    <h4>Ejercicio Práctico: Método de Bienvenida</h4>
+                    <p>Crea un método llamado <code>GenerarBienvenida</code> que reciba un parámetro de tipo <code>string</code> llamado <code>nombreUsuario</code>. El método debe devolver un <code>string</code> que diga "Bienvenido, [nombreUsuario]!".</p>
+                    <p>Por ejemplo, si se le pasa "Alicia", debe devolver "Bienvenido, Alicia!".</p>
+                    <div class="input-group">
+                        <label for="ex5-code">Tu código C# (solo el método, sin la clase envolvente):</label>
+                        <textarea id="ex5-code" placeholder="Escribe tu código aquí..."></textarea>
+                        <button onclick="checkEx5()">Comprobar Código</button>
+                        <div id="ex5-feedback" class="feedback"></div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        // JavaScript para la interactividad del laboratorio
+        document.addEventListener('DOMContentLoaded', () => {
+            const moduleButtons = document.querySelectorAll('.module-btn');
+            const moduleSections = document.querySelectorAll('.module-section');
+
+            // Función para manejar el clic en los botones de módulo
+            moduleButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Quita la clase 'active' de todos los botones y secciones
+                    moduleButtons.forEach(btn => btn.classList.remove('active'));
+                    moduleSections.forEach(section => section.classList.remove('active'));
+
+                    // Añade la clase 'active' al botón clicado
+                    button.classList.add('active');
+
+                    // Muestra la sección de módulo correspondiente
+                    const targetModuleId = button.dataset.module;
+                    document.getElementById(targetModuleId).classList.add('active');
+                });
+            });
+        });
+
+        // Función de ayuda para mostrar retroalimentación
+        function showFeedback(elementId, isCorrect, message) {
+            const feedbackElement = document.getElementById(elementId);
+            feedbackElement.textContent = message;
+            // Elimina clases anteriores y añade la correcta
+            feedbackElement.classList.remove('correct', 'incorrect');
+            if (isCorrect) {
+                feedbackElement.classList.add('correct');
+            } else {
+                feedbackElement.classList.add('incorrect');
+            }
+            feedbackElement.style.display = 'block'; // Muestra el mensaje
+        }
+
+        // --- Lógica del Módulo 1 ---
+        function checkSim1() {
+            const input = document.getElementById('sim1-output').value.trim();
+            const expected = "Hola, Mundo en C#!";
+            if (input === expected) {
+                showFeedback('sim1-feedback', true, '¡Correcto! La salida esperada es exactamente esa.');
+            } else {
+                showFeedback('sim1-feedback', false, `Incorrecto. La salida esperada era: "${expected}"`);
+            }
+        }
+
+        function checkEx1() {
+            const code = document.getElementById('ex1-code').value.trim();
+            // Expresión regular para buscar "Console.WriteLine" seguido del mensaje exacto
+            const regex = /Console\.WriteLine\s*\(\s*["']¡Soy un programador C#!["']\s*\);?/i;
+            if (regex.test(code)) {
+                showFeedback('ex1-feedback', true, '¡Excelente! Tu código es correcto. Has escrito tu primera línea en C#.');
+            } else {
+                showFeedback('ex1-feedback', false, 'Incorrecto. Asegúrate de usar Console.WriteLine() con el mensaje exacto "¡Soy un programador C#!" y la sintaxis correcta (paréntesis, comillas, punto y coma).');
+            }
+        }
+
+        // --- Lógica del Módulo 2 ---
+        function checkSim2() {
+            const input = document.getElementById('sim2-output').value.trim();
+            const expected = "Hola, Pedro!";
+            if (input === expected) {
+                showFeedback('sim2-feedback', true, '¡Correcto! La concatenación de strings produce "Hola, Pedro!".');
+            } else {
+                showFeedback('sim2-feedback', false, `Incorrecto. El valor final de mensajeCompleto es: "${expected}"`);
+            }
+        }
+
+        function checkEx2() {
+            const code = document.getElementById('ex2-code').value.trim().toLowerCase();
+            // Verificaciones individuales para cada parte del ejercicio
+            const hasInt = /int\s+cantidad\s*=\s*150\s*;?/i.test(code);
+            const hasString = /string\s+producto\s*=\s*["']lapices["']\s*;?/i.test(code);
+            // Verifica si se imprime usando concatenación, interpolación o String.Format
+            const hasConsoleWrite = /console\.writeline\s*\(\s*["']tienes\s+["']\s*\+\s*cantidad\s*\+\s*["']\s+lapices\.["']\s*\);?/i.test(code) || // Concatenación
+                                    /console\.writeline\s*\(\s*`*tienes\s+\$\{cantidad\}\s+lapices\.`*\s*\);?/i.test(code) || // Interpolación de string
+                                    /console\.writeline\s*\(\s*string\.format\s*\(\s*["']tienes\s+\{0\}\s+lapices\.["']\s*,\s*cantidad\s*\)\s*\);?/i.test(code); // String.Format
+
+            if (hasInt && hasString && hasConsoleWrite) {
+                showFeedback('ex2-feedback', true, '¡Magnífico! Has declarado las variables correctamente y las has impreso como se esperaba.');
+            } else {
+                let message = 'Incorrecto. ';
+                if (!hasInt) message += 'Asegúrate de declarar `int cantidad = 150;`. ';
+                if (!hasString) message += 'Asegúrate de declarar `string producto = "Lapices";`. ';
+                if (!hasConsoleWrite) message += 'Asegúrate de imprimir "Tienes 150 Lapices." usando la variable `cantidad`.';
+                showFeedback('ex2-feedback', false, message);
+            }
+        }
+
+        // --- Lógica del Módulo 3 ---
+        function checkSim3() {
+            const input = document.getElementById('sim3-output').value.trim();
+            const expected = "Temperatura agradable.";
+            if (input === expected) {
+                showFeedback('sim3-feedback', true, '¡Correcto! 28 está entre 20 y 30, por lo que la segunda condición (else if) es verdadera.');
+            } else {
+                showFeedback('sim3-feedback', false, `Incorrecto. La salida esperada era: "${expected}"`);
+            }
+        }
+
+        function checkEx3() {
+            const code = document.getElementById('ex3-code').value.trim().toLowerCase();
+            const hasIntDecl = /int\s+numero\s*=\s*-5\s*;?/i.test(code);
+            // Verificaciones de las condiciones y sus respectivas impresiones
+            const hasIf = /if\s*\(numero\s*>\s*0\)/i.test(code) && code.includes('console.writeline("positivo"');
+            const hasElseIf = /else\s*if\s*\(numero\s*<\s*0\)/i.test(code) && code.includes('console.writeline("negativo"');
+            const hasElse = /else\s*{?\s*console\.writeline\s*\("cero"\);?\}?/i.test(code); // Busca 'else' y la impresión de "cero"
+
+            if (hasIntDecl && hasIf && hasElseIf && hasElse) {
+                showFeedback('ex3-feedback', true, '¡Perfecto! Tu código maneja correctamente las diferentes condiciones para clasificar el número.');
+            } else {
+                let message = 'Incorrecto. ';
+                if (!hasIntDecl) message += 'Asegúrate de declarar `int numero = -5;`. ';
+                if (!hasIf) message += 'Verifica tu `if` para números positivos. ';
+                if (!hasElseIf) message += 'Verifica tu `else if` para números negativos. ';
+                if (!hasElse) message += 'Verifica tu `else` para el cero. ';
+                showFeedback('ex3-feedback', false, message + 'Revisa la sintaxis de tus condicionales y las impresiones exactas.');
+            }
+        }
+
+        // --- Lógica del Módulo 4 ---
+        function checkSim4() {
+            const input = document.getElementById('sim4-output').value.trim();
+            const expected = "Número 1\nNúmero 2\nNúmero 3\nNúmero 4";
+            if (input === expected) {
+                showFeedback('sim4-feedback', true, '¡Correcto! El bucle itera de 1 a 4, incluyendo el 4.');
+            } else {
+                showFeedback('sim4-feedback', false, `Incorrecto. La salida esperada era:\n${expected}`);
+            }
+        }
+
+        function checkEx4() {
+            const code = document.getElementById('ex4-code').value.trim().toLowerCase();
+            // Verificaciones para el bucle while y sus componentes
+            const hasWhile = /while\s*\(.+\)/.test(code); // Busca un bucle while
+            const hasInitialValue = /(int\s+i\s*=\s*5|int\s+contador\s*=\s*5)/.test(code); // Variable inicializada en 5
+            const hasConsoleWriteNumbers = /(console\.writeline\s*\(\s*(i|contador)\s*\);?\s*){4,}/.test(code) || // Imprime la variable al menos 4 veces
+                                           /console\.writeline\s*\(\s*5\s*\);?/.test(code) && /console\.writeline\s*\(\s*4\s*\);?/.test(code) && /console\.writeline\s*\(\s*3\s*\);?/.test(code) && /console\.writeline\s*\(\s*2\s*\);?/.test(code) && /console\.writeline\s*\(\s*1\s*\);?/.test(code); // Imprime los números 5 a 1
+            const hasDecrement = /i--|contador--|--i|--contador|i\s*=\s*i\s*-\s*1|contador\s*=\s*contador\s*-\s*1/.test(code); // Busca el decremento de la variable
+            const hasFinalPrint = /console\.writeline\s*\("¡despegue!"\)/.test(code); // Busca la impresión final
+
+            if (hasWhile && hasInitialValue && hasConsoleWriteNumbers && hasDecrement && hasFinalPrint) {
+                showFeedback('ex4-feedback', true, '¡Impresionante! Has creado un bucle `while` que cuenta hacia atrás y anuncia el despegue.');
+            } else {
+                let message = 'Incorrecto. ';
+                if (!hasWhile) message += 'Asegúrate de usar un bucle `while`. ';
+                if (!hasInitialValue) message += 'Inicializa una variable en 5 antes del bucle (ej: `int i = 5;`). ';
+                if (!hasConsoleWriteNumbers) message += 'Asegúrate de imprimir los números del 5 al 1 dentro del bucle. ';
+                if (!hasDecrement) message += 'No olvides decrementar tu variable de conteo dentro del bucle. ';
+                if (!hasFinalPrint) message += 'Asegúrate de imprimir "¡Despegue!" al final, fuera del bucle. ';
+                showFeedback('ex4-feedback', false, message + 'Revisa la estructura de tu bucle.');
+            }
+        }
+
+        // --- Lógica del Módulo 5 ---
+        function checkSim5() {
+            const input = document.getElementById('sim5-output').value.trim();
+            const expected = "20";
+            if (input === expected) {
+                showFeedback('sim5-feedback', true, '¡Correcto! 4 multiplicado por 5 es 20. Así funcionan los métodos con valor de retorno.');
+            } else {
+                showFeedback('sim5-feedback', false, `Incorrecto. El valor de retorno esperado era: "${expected}"`);
+            }
+        }
+
+        function checkEx5() {
+            const code = document.getElementById('ex5-code').value.trim().toLowerCase();
+            // Verifica la firma del método: public string GenerarBienvenida(string nombreUsuario)
+            const hasMethodSignature = /(public\s+string|string\s+public)\s+generarbienvenida\s*\(\s*string\s+nombreusuario\s*\)/.test(code);
+            // Verifica el retorno del string usando concatenación, interpolación o String.Format
+            const hasReturnStatement = /return\s*["']bienvenido,\s+["']\s*\+\s*nombreusuario\s*\+\s*["']!["']\s*;?/i.test(code) || // Concatenación
+                                       /return\s*`*bienvenido,\s+\$\{nombreusuario\}!(`|\s*)\s*;?/i.test(code) || // Interpolación de string
+                                       /return\s*string\.format\s*\(\s*["']bienvenido,\s+\{0\}!["']\s*,\s*nombreusuario\s*\)\s*;?/i.test(code); // String.Format
+
+            if (hasMethodSignature && hasReturnStatement) {
+                showFeedback('ex5-feedback', true, '¡Excelente! Has definido correctamente el método `GenerarBienvenida` y devuelve el string esperado.');
+            } else {
+                let message = 'Incorrecto. ';
+                if (!hasMethodSignature) message += 'Asegúrate de que la firma del método sea `public string GenerarBienvenida(string nombreUsuario)`. ';
+                if (!hasReturnStatement) message += 'Asegúrate de que el método devuelva `"Bienvenido, " + nombreUsuario + "!"` o su equivalente con interpolación/String.Format. ';
+                showFeedback('ex5-feedback', false, message + 'Revisa la definición y el valor de retorno de tu método.');
+            }
+        }
+    </script>
+</body>
+</html>
