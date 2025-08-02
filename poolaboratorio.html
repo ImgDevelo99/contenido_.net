@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio de Programación Orientada a Objetos en C# (Básico)</title>
+    <style>
+        /* Estilos Generales */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Encabezado */
+        .main-header {
+            display: flex;
+            align-items: center;
+            background-color: #003366; /* Azul oscuro SENA */
+            padding: 10px 20px;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            flex-shrink: 0; /* No permitir que el header se encoja */
+        }
+
+        .header-logo {
+            height: 50px; /* Ajusta el tamaño del logo */
+            margin-right: 15px;
+            border-radius: 50%; /* Opcional: para logos circulares si aplica */
+        }
+
+        .header-text {
+            font-size: 1.5em;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        /* Contenedor Principal */
+        .container {
+            max-width: 960px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            flex-grow: 1; /* Permite que el contenedor principal ocupe el espacio restante */
+        }
+
+        h1 {
+            color: #003366;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 15px;
+        }
+
+        /* Módulos de Contenido */
+        .module {
+            margin-bottom: 40px;
+            padding: 25px;
+            background-color: #e9eff2;
+            border-left: 5px solid #007bff; /* Azul primario para el borde izquierdo */
+            border-radius: 5px;
+        }
+
+        .module h2 {
+            color: #003366;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .module h3 {
+            color: #0056b3; /* Azul ligeramente más claro */
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .module p {
+            margin-bottom: 15px;
+        }
+
+        /* Áreas de Simulación y Ejercicio */
+        .simulation-area, .exercise-area {
+            background-color: #f8fbfd;
+            border: 1px dashed #cceeff;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .code-example {
+            background-color: #eef2f5;
+            border: 1px solid #d4e0e8;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            overflow-x: auto; /* Para código que excede el ancho */
+        }
+
+        .code-example pre {
+            margin: 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            color: #000;
+        }
+
+        .code-editor {
+            width: calc(100% - 22px); /* Ancho total menos padding/border */
+            min-height: 150px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.95em;
+            background-color: #fdfdfd;
+            resize: vertical; /* Permitir redimensionar verticalmente */
+            margin-bottom: 10px;
+        }
+
+        /* Inputs y Botones */
+        input[type="text"], input[type="number"] {
+            padding: 8px 10px;
+            margin: 5px 10px 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            display: inline-block;
+            box-sizing: border-box; /* Incluir padding y border en el tamaño total */
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Áreas de Salida y Retroalimentación */
+        .output-area {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e6ffe6; /* Verde claro para éxito/salida */
+            border: 1px solid #66cc66;
+            border-radius: 5px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: #006400; /* Verde oscuro */
+        }
+
+        .feedback-area {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .feedback-area.correct {
+            background-color: #e6ffe6;
+            border: 1px solid #66cc66;
+            color: #006400;
+        }
+
+        .feedback-area.incorrect {
+            background-color: #ffe6e6; /* Rojo claro para errores */
+            border: 1px solid #cc6666;
+            color: #cc0000;
+        }
+
+        /* Pequeñas mejoras de accesibilidad */
+        label {
+            display: inline-block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <img src="https://i.post.cc/mZzx20gW/Logosimbolo-SENA-PRINCIPAL.png" alt="Logotipo SENA" class="header-logo">
+        <span class="header-text">Centro de Servicios y Gestión Empresarial</span>
+    </header>
+
+    <div class="container">
+        <h1>Laboratorio de Programación Orientada a Objetos en C# (Básico)</h1>
+        <p>¡Bienvenido! Este laboratorio te ayudará a comprender los conceptos fundamentales de la Programación Orientada a Objetos (POO) en C# a través de simulaciones y ejercicios interactivos.</p>
+
+        <!-- Sección 1: Clases y Objetos -->
+        <section class="module">
+            <h2>1. Clases y Objetos</h2>
+            <h3>Concepto</h3>
+            <p>Una <strong>Clase</strong> es una plantilla o plano para crear objetos. Define las propiedades (características) y métodos (comportamientos) que los objetos de esa clase tendrán. Un <strong>Objeto</strong> es una instancia real de una clase, con valores específicos para sus propiedades.</p>
+
+            <h3>Simulación: Creando tu primera clase y objeto</h3>
+            <p>Imagina que queremos representar personas. Primero, definimos una clase `Persona` con propiedades para `Nombre` y `Edad` (simulado en C#).</p>
+            <div class="simulation-area">
+                <p><strong>Paso 1: Define la clase Persona (simulada):</strong></p>
+                <div class="code-example">
+                    <pre>
+class Persona
+{
+    public string Nombre;
+    public int Edad;
+}</pre>
+                </div>
+                <p><strong>Paso 2: Crea un objeto (instancia) de la clase Persona y asigna sus propiedades:</strong></p>
+                <label for="personaNameSim">Nombre de la persona:</label>
+                <input type="text" id="personaNameSim" value="Alice">
+                <label for="personaAgeSim">Edad de la persona:</label>
+                <input type="number" id="personaAgeSim" value="30">
+                <button onclick="simulateClassObject()">Crear Persona</button>
+                <div id="objectSimOutput" class="output-area"></div>
+            </div>
+
+            <h3>Ejercicio Práctico: Declarando Clases y Objetos</h3>
+            <p>Tu tarea es crear una clase llamada `Carro` con dos propiedades públicas: `Marca` (tipo `string`) y `Modelo` (tipo `string`). Luego, dentro del editor, crea un objeto de `Carro` llamado `miCarro` y asigna "Toyota" a la propiedad `Marca` y "Corolla" a la propiedad `Modelo`.</p>
+            <textarea id="classObjectExercise" class="code-editor" rows="12" placeholder="Escribe tu código C# aquí...
+// Ejemplo de estructura:
+// class MiClase
+// {
+//     public string MiPropiedad;
+// }
+//
+// MiClase miObjeto = new MiClase();
+// miObjeto.MiPropiedad = 'Valor';
+
+// ¡Ahora tu turno!"></textarea>
+            <button onclick="checkClassObjectExercise()">Comprobar Ejercicio</button>
+            <div id="classObjectFeedback" class="feedback-area"></div>
+        </section>
+
+        <!-- Sección 2: Propiedades y Métodos -->
+        <section class="module">
+            <h2>2. Propiedades y Métodos</h2>
+            <h3>Concepto</h3>
+            <p>Las <strong>Propiedades</strong> son las variables que definen los atributos o características de un objeto (ej., `Nombre`, `Edad`). Los <strong>Métodos</strong> son funciones o procedimientos que definen las acciones o comportamientos que un objeto puede realizar (ej., `Saludar()`, `Correr()`).</p>
+
+            <h3>Simulación: Agregando Propiedades y Métodos</h3>
+            <p>Extendamos nuestra clase `Persona` para incluir una propiedad `Apellido` y un método `Saludar()` que use las propiedades del objeto para formar un saludo.</p>
+            <div class="simulation-area">
+                <p><strong>Paso 1: Clase Persona con un método (simulada):</strong></p>
+                <div class="code-example">
+                    <pre>
+class Persona
+{
+    public string Nombre;
+    public string Apellido; // Nueva propiedad
+
+    public void Saludar() // Nuevo método
+    {
+        // Console.WriteLine("Hola, soy " + Nombre + " " + Apellido);
+    }
+}</pre>
+                </div>
+                <p><strong>Paso 2: Crea una Persona, asigna sus propiedades y hazla saludar:</strong></p>
+                <label for="personFNameSim">Nombre:</label>
+                <input type="text" id="personFNameSim" value="Bob">
+                <label for="personLNameSim">Apellido:</label>
+                <input type="text" id="personLNameSim" value="Esponja">
+                <button onclick="simulatePropertiesMethods()">Saludar</button>
+                <div id="methodSimOutput" class="output-area"></div>
+            </div>
+
+            <h3>Ejercicio Práctico: Implementando Métodos</h3>
+            <p>Dada la clase `Rectangulo`, añade un método público llamado `CalcularArea()` que retorne el área del rectángulo (`double`). La fórmula es `Base * Altura`. Luego, crea un objeto `Rectangulo` llamado `miRectangulo`, asigna `Base = 5` y `Altura = 10`, y llama al método `CalcularArea()`.</p>
+            <textarea id="propertiesMethodsExercise" class="code-editor" rows="18" placeholder="Escribe tu código C# aquí...
+class Rectangulo
+{
+    public double Base;
+    public double Altura;
+
+    // TODO: Añade tu método CalcularArea() aquí
+    // public double CalcularArea()
+    // {
+    //     // ... tu código ...
+    // }
+}
+
+// TODO: Crea un objeto Rectangulo, asigna Base y Altura, y llama al método.
+// Ejemplo:
+// Rectangulo miRectangulo = new Rectangulo();
+// miRectangulo.Base = 5;
+// miRectangulo.Altura = 10;
+// double area = miRectangulo.CalcularArea();
+// Console.WriteLine('El área es: ' + area);"></textarea>
+            <button onclick="checkPropertiesMethodsExercise()">Comprobar Ejercicio</button>
+            <div id="propertiesMethodsFeedback" class="feedback-area"></div>
+        </section>
+
+        <!-- Sección 3: Constructores -->
+        <section class="module">
+            <h2>3. Constructores</h2>
+            <h3>Concepto</h3>
+            <p>Un <strong>Constructor</strong> es un método especial que se llama automáticamente cuando se crea un nuevo objeto de una clase. Su propósito principal es inicializar el estado del objeto, es decir, asignar valores iniciales a sus propiedades. Los constructores tienen el mismo nombre que la clase y no tienen un tipo de retorno.</p>
+
+            <h3>Simulación: Usando Constructores</h3>
+            <p>Vamos a modificar nuestra clase `Persona` para que el nombre y la edad se asignen directamente al crear el objeto, utilizando un constructor que recibe estos valores como parámetros.</p>
+            <div class="simulation-area">
+                <p><strong>Paso 1: Clase Persona con constructor (simulada):</strong></p>
+                <div class="code-example">
+                    <pre>
+class Persona
+{
+    public string Nombre;
+    public int Edad;
+
+    // Constructor: Tiene el mismo nombre que la clase
+    public Persona(string nombre, int edad)
+    {
+        Nombre = nombre; // Asigna el parámetro 'nombre' a la propiedad 'Nombre'
+        Edad = edad;     // Asigna el parámetro 'edad' a la propiedad 'Edad'
+    }
+}</pre>
+                </div>
+                <p><strong>Paso 2: Crea una Persona usando el constructor para inicializar sus valores:</strong></p>
+                <label for="constructorNameSim">Nombre:</label>
+                <input type="text" id="constructorNameSim" value="Charlie">
+                <label for="constructorAgeSim">Edad:</label>
+                <input type="number" id="constructorAgeSim" value="25">
+                <button onclick="simulateConstructors()">Crear con Constructor</button>
+                <div id="constructorSimOutput" class="output-area"></div>
+            </div>
+
+            <h3>Ejercicio Práctico: Implementando Constructores</h3>
+            <p>Crea una clase `Libro` con propiedades públicas `Titulo` (string) y `Autor` (string). Implementa un constructor público para la clase `Libro` que reciba el título y el autor como parámetros y los asigne a las propiedades correspondientes. Luego, crea un objeto `Libro` llamado `miLibro` utilizando este constructor, por ejemplo, con "Cien años de soledad" y "Gabriel García Márquez".</p>
+            <textarea id="constructorsExercise" class="code-editor" rows="18" placeholder="Escribe tu código C# aquí...
+// Ejemplo de constructor:
+// class MiClase
+// {
+//     public string Propiedad;
+//
+//     public MiClase(string valorInicial)
+//     {
+//         Propiedad = valorInicial;
+//     }
+// }
+
+// TODO: Define la clase Libro con sus propiedades y constructor.
+// TODO: Crea una instancia de Libro usando el constructor."></textarea>
+            <button onclick="checkConstructorsExercise()">Comprobar Ejercicio</button>
+            <div id="constructorsFeedback" class="feedback-area"></div>
+        </section>
+
+        <section class="module">
+            <h2>¡Felicidades!</h2>
+            <p>Has completado los conceptos básicos de Programación Orientada a Objetos en C#. Has aprendido sobre Clases, Objetos, Propiedades, Métodos y Constructores.</p>
+            <p>La POO es una habilidad fundamental. ¡Sigue practicando y explorando temas más avanzados como la herencia, el polimorfismo y las interfaces!</p>
+        </section>
+
+    </div>
+
+    <script>
+        // Función para la simulación de Clases y Objetos
+        function simulateClassObject() {
+            const name = document.getElementById('personaNameSim').value;
+            const age = document.getElementById('personaAgeSim').value;
+            const outputDiv = document.getElementById('objectSimOutput');
+
+            if (name && age) {
+                // Simula la creación de un objeto C#
+                const personaObject = {
+                    Nombre: name,
+                    Edad: parseInt(age)
+                };
+
+                outputDiv.innerHTML = `
+                    <p>Se ha creado un objeto <strong>Persona</strong>:</p>
+                    <pre>
+Persona miPersona = new Persona();
+miPersona.Nombre = "${personaObject.Nombre}";
+miPersona.Edad = ${personaObject.Edad};
+                    </pre>
+                    <p>Propiedades del objeto <code>miPersona</code>:</p>
+                    <ul>
+                        <li>Nombre: <strong>${personaObject.Nombre}</strong></li>
+                        <li>Edad: <strong>${personaObject.Edad}</strong> años</li>
+                    </ul>
+                    <p>¡Has simulado la creación de un objeto en C#!</p>
+                `;
+                outputDiv.className = 'output-area'; // Asegura la clase CSS correcta
+            } else {
+                outputDiv.innerHTML = '<p style="color: red;">Por favor, ingresa el nombre y la edad para la simulación.</p>';
+                outputDiv.classList.remove('output-area');
+            }
+        }
+
+        // Función para verificar el ejercicio de Clases y Objetos
+        function checkClassObjectExercise() {
+            const code = document.getElementById('classObjectExercise').value;
+            const feedbackDiv = document.getElementById('classObjectFeedback');
+
+            // Expresiones regulares para verificar los patrones en el código
+            const hasClass = /class\s+Carro\s*{/i.test(code);
+            const hasMarcaProp = /public\s+string\s+Marca\s*;/i.test(code);
+            const hasModeloProp = /public\s+string\s+Modelo\s*;/i.test(code);
+            const hasInstantiation = /Carro\s+miCarro\s*=\s*new\s+Carro\s*\(\s*\)\s*;/i.test(code);
+            const hasMarcaAssignment = /miCarro\.Marca\s*=\s*("|')Toyota("|')\s*;/i.test(code);
+            const hasModeloAssignment = /miCarro\.Modelo\s*=\s*("|')Corolla("|')\s*;/i.test(code);
+
+            if (hasClass && hasMarcaProp && hasModeloProp && hasInstantiation && hasMarcaAssignment && hasModeloAssignment) {
+                feedbackDiv.innerHTML = '¡Correcto! Has definido la clase `Carro` y creado un objeto correctamente.';
+                feedbackDiv.className = 'feedback-area correct';
+            } else {
+                let feedbackMessage = 'Incorrecto. Asegúrate de cumplir con todos los requisitos:<ul>';
+                if (!hasClass) feedbackMessage += '<li>Definir una clase llamada `Carro`.</li>';
+                if (!hasMarcaProp) feedbackMessage += '<li>Añadir una propiedad pública `Marca` de tipo `string` a la clase `Carro`.</li>';
+                if (!hasModeloProp) feedbackMessage += '<li>Añadir una propiedad pública `Modelo` de tipo `string` a la clase `Carro`.</li>';
+                if (!hasInstantiation) feedbackMessage += '<li>Crear una instancia de `Carro` llamada `miCarro` (ej., `Carro miCarro = new Carro();`).</li>';
+                if (!hasMarcaAssignment) feedbackMessage += '<li>Asignar la cadena "Toyota" a `miCarro.Marca`.</li>';
+                if (!hasModeloAssignment) feedbackMessage += '<li>Asignar la cadena "Corolla" a `miCarro.Modelo`.</li>';
+                feedbackMessage += '</ul>';
+                feedbackDiv.innerHTML = feedbackMessage;
+                feedbackDiv.className = 'feedback-area incorrect';
+            }
+        }
+
+        // Función para la simulación de Propiedades y Métodos
+        function simulatePropertiesMethods() {
+            const fName = document.getElementById('personFNameSim').value;
+            const lName = document.getElementById('personLNameSim').value;
+            const outputDiv = document.getElementById('methodSimOutput');
+
+            if (fName && lName) {
+                // Simula la creación de un objeto C# y la llamada a un método
+                const personaObject = {
+                    Nombre: fName,
+                    Apellido: lName,
+                    Saludar: function() {
+                        return `Hola, soy ${this.Nombre} ${this.Apellido}.`;
+                    }
+                };
+
+                const greeting = personaObject.Saludar();
+
+                outputDiv.innerHTML = `
+                    <p>Se ha creado un objeto <strong>Persona</strong> y se ha llamado al método <code>Saludar()</code>:</p>
+                    <pre>
+Persona miPersona = new Persona();
+miPersona.Nombre = "${personaObject.Nombre}";
+miPersona.Apellido = "${personaObject.Apellido}";
+miPersona.Saludar(); // Simula la salida: "${greeting}"
+                    </pre>
+                    <p>Resultado del método <code>Saludar()</code>: <strong>${greeting}</strong></p>
+                    <p>¡Has simulado el uso de propiedades y un método!</p>
+                `;
+                outputDiv.className = 'output-area';
+            } else {
+                outputDiv.innerHTML = '<p style="color: red;">Por favor, ingresa el nombre y el apellido para la simulación.</p>';
+                outputDiv.classList.remove('output-area');
+            }
+        }
+
+        // Función para verificar el ejercicio de Propiedades y Métodos
+        function checkPropertiesMethodsExercise() {
+            const code = document.getElementById('propertiesMethodsExercise').value;
+            const feedbackDiv = document.getElementById('propertiesMethodsFeedback');
+
+            // Verificar la existencia del método CalcularArea
+            const hasMethod = /public\s+double\s+CalcularArea\s*\(\s*\)\s*{[^}]*return\s+(this\.)?Base\s*\*\s*(this\.)?Altura\s*;/is.test(code);
+            // Verificar la instanciación del objeto
+            const hasInstantiation = /Rectangulo\s+miRectangulo\s*=\s*new\s+Rectangulo\s*\(\s*\)\s*;/i.test(code);
+            // Verificar las asignaciones de propiedades
+            const hasBaseAssignment = /miRectangulo\.Base\s*=\s*5(\.0)?\s*;/i.test(code);
+            const hasAlturaAssignment = /miRectangulo\.Altura\s*=\s*10(\.0)?\s*;/i.test(code);
+            // Verificar la llamada al método
+            const hasMethodCall = /miRectangulo\.CalcularArea\s*\(\s*\)\s*;/i.test(code);
+
+            if (hasMethod && hasInstantiation && hasBaseAssignment && hasAlturaAssignment && hasMethodCall) {
+                feedbackDiv.innerHTML = '¡Correcto! Has implementado el método `CalcularArea` y lo has usado correctamente.';
+                feedbackDiv.className = 'feedback-area correct';
+            } else {
+                let feedbackMessage = 'Incorrecto. Asegúrate de:<ul>';
+                if (!hasMethod) feedbackMessage += '<li>Añadir el método público `CalcularArea()` de tipo `double` que retorna `Base * Altura`.</li>';
+                if (!hasInstantiation) feedbackMessage += '<li>Crear una instancia de `Rectangulo` llamada `miRectangulo`.</li>';
+                if (!hasBaseAssignment) feedbackMessage += '<li>Asignar `5` a `miRectangulo.Base`.</li>';
+                if (!hasAlturaAssignment) feedbackMessage += '<li>Asignar `10` a `miRectangulo.Altura`.</li>';
+                if (!hasMethodCall) feedbackMessage += '<li>Llamar al método `CalcularArea()` en `miRectangulo`.</li>';
+                feedbackMessage += '</ul>';
+                feedbackDiv.innerHTML = feedbackMessage;
+                feedbackDiv.className = 'feedback-area incorrect';
+            }
+        }
+
+        // Función para la simulación de Constructores
+        function simulateConstructors() {
+            const name = document.getElementById('constructorNameSim').value;
+            const age = document.getElementById('constructorAgeSim').value;
+            const outputDiv = document.getElementById('constructorSimOutput');
+
+            if (name && age) {
+                // Simula la creación de un objeto C# con constructor
+                const personaObject = {
+                    Nombre: name,
+                    Edad: parseInt(age)
+                };
+
+                outputDiv.innerHTML = `
+                    <p>Se ha creado un objeto <strong>Persona</strong> usando el constructor:</p>
+                    <pre>
+Persona miPersona = new Persona("${personaObject.Nombre}", ${personaObject.Edad});
+                    </pre>
+                    <p>Propiedades del objeto <code>miPersona</code> (inicializadas por el constructor):</p>
+                    <ul>
+                        <li>Nombre: <strong>${personaObject.Nombre}</strong></li>
+                        <li>Edad: <strong>${personaObject.Edad}</strong> años</li>
+                    </ul>
+                    <p>¡Has simulado la inicialización de un objeto con un constructor!</p>
+                `;
+                outputDiv.className = 'output-area';
+            } else {
+                outputDiv.innerHTML = '<p style="color: red;">Por favor, ingresa el nombre y la edad para la simulación.</p>';
+                outputDiv.classList.remove('output-area');
+            }
+        }
+
+        // Función para verificar el ejercicio de Constructores
+        function checkConstructorsExercise() {
+            const code = document.getElementById('constructorsExercise').value;
+            const feedbackDiv = document.getElementById('constructorsFeedback');
+
+            // Verificar la existencia de la clase Libro
+            const hasClass = /class\s+Libro\s*{/i.test(code);
+            // Verificar las propiedades Titulo y Autor
+            const hasTituloProp = /public\s+string\s+Titulo\s*;/i.test(code);
+            const hasAutorProp = /public\s+string\s+Autor\s*;/i.test(code);
+            // Verificar el constructor con parámetros y asignaciones
+            const hasConstructor = /public\s+Libro\s*\(\s*string\s+(?:titulo|t)\s*,\s*string\s+(?:autor|a)\s*\)\s*{[^}]*((this\.)?Titulo\s*=\s*(?:titulo|t)\s*;\s*(this\.)?Autor\s*=\s*(?:autor|a)\s*| (this\.)?Autor\s*=\s*(?:autor|a)\s*;\s*(this\.)?Titulo\s*=\s*(?:titulo|t))\s*;\s*}/is.test(code);
+            // Verificar la instanciación usando el constructor con dos strings
+            const hasInstantiation = /Libro\s+miLibro\s*=\s*new\s+Libro\s*\(\s*("|').*?("|')\s*,\s*("|').*?("|')\s*\)\s*;/i.test(code);
+
+            if (hasClass && hasTituloProp && hasAutorProp && hasConstructor && hasInstantiation) {
+                feedbackDiv.innerHTML = '¡Correcto! Has implementado el constructor de la clase `Libro` y lo has usado correctamente.';
+                feedbackDiv.className = 'feedback-area correct';
+            } else {
+                let feedbackMessage = 'Incorrecto. Asegúrate de:<ul>';
+                if (!hasClass) feedbackMessage += '<li>Definir la clase `Libro`.</li>';
+                if (!hasTituloProp) feedbackMessage += '<li>Añadir una propiedad pública `Titulo` de tipo `string` a la clase `Libro`.</li>';
+                if (!hasAutorProp) feedbackMessage += '<li>Añadir una propiedad pública `Autor` de tipo `string` a la clase `Libro`.</li>';
+                if (!hasConstructor) feedbackMessage += '<li>Implementar un constructor público que reciba `string titulo` y `string autor` y los asigne a las propiedades.</li>';
+                if (!hasInstantiation) feedbackMessage += '<li>Crear un objeto `Libro` llamado `miLibro` usando el constructor (ej: `new Libro("Mi Titulo", "Mi Autor");`).</li>';
+                feedbackMessage += '</ul>';
+                feedbackDiv.innerHTML = feedbackMessage;
+                feedbackDiv.className = 'feedback-area incorrect';
+            }
+        }
+    </script>
+</body>
+</html>

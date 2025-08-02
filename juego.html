@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Clasificación C#</title>
+    <style>
+        /* Estilos Generales y Reset */
+        :root {
+            --primary-color: #28a745; /* Verde SENA */
+            --secondary-color: #218838;
+            --accent-color: #007bff;
+            --background-light: #f8f9fa;
+            --background-dark: #343a40;
+            --text-color: #333;
+            --header-bg: #e9ecef;
+            --item-bg: #ffffff;
+            --item-border: #ddd;
+            --dropzone-bg: #e0f2f7;
+            --dropzone-border: #aed6f1;
+            --correct-color: #28a745;
+            --incorrect-color: #dc3545;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-light);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Encabezado */
+        header {
+            background-color: var(--header-bg);
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            flex-wrap: wrap; /* Permite que el contenido se ajuste en pantallas pequeñas */
+        }
+
+        header img {
+            height: 60px; /* Ajusta el tamaño del logo */
+            width: auto;
+            border-radius: 5px;
+        }
+
+        header h1 {
+            font-size: 1.8em;
+            color: var(--primary-color);
+            margin: 0;
+            flex-grow: 1; /* Permite que el texto ocupe el espacio restante */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        /* Contenedor Principal del Juego */
+        main {
+            flex-grow: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 1200px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden; /* Para contener los elementos flotantes o con margen negativo */
+        }
+
+        h2 {
+            font-size: 2.2em;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            text-align: center;
+            width: 100%;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .instructions {
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #555;
+            max-width: 800px;
+        }
+
+        /* Contenedor de Elementos Arrastrables */
+        #items-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px;
+            background-color: var(--background-light);
+            border-radius: 8px;
+            margin-bottom: 30px;
+            width: 100%;
+            border: 1px dashed #ccc;
+            min-height: 150px;
+            align-items: center;
+        }
+
+        .item {
+            background-color: var(--item-bg);
+            border: 1px solid var(--item-border);
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: grab;
+            font-weight: bold;
+            font-size: 1.1em;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            touch-action: none; /* Previene el zoom en dispositivos táctiles */
+            user-select: none; /* Evita selección de texto */
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .item.dragging {
+            opacity: 0.6;
+            border-color: var(--accent-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: scale(1.05);
+            cursor: grabbing;
+        }
+
+        /* Contenedor de Zonas de Clasificación */
+        #drop-zones-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+        .drop-zone {
+            flex: 1; /* Permite que las zonas se expandan */
+            min-width: 300px; /* Ancho mínimo para cada zona */
+            max-width: 350px; /* Ancho máximo */
+            background-color: var(--dropzone-bg);
+            border: 2px dashed var(--dropzone-border);
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 250px; /* Altura mínima para mostrar los elementos */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: border-color 0.2s ease, background-color 0.2s ease;
+        }
+
+        .drop-zone h3 {
+            font-size: 1.5em;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 5px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .drop-zone.drag-over {
+            border-color: var(--primary-color);
+            background-color: #d4edda; /* Un verde más claro */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .drop-zone .dropped-items-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            width: 100%;
+            min-height: 100px; /* Para que la zona no colapse si no hay items */
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 10px;
+        }
+
+        .drop-zone .item {
+            padding: 8px 15px;
+            font-size: 0.95em;
+            background-color: #f0f0f0;
+            cursor: grab; /* Permite arrastrar de nuevo */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            margin: 0; /* Reiniciar márgenes heredados */
+        }
+        
+        /* Feedback de Respuesta */
+        .item.correct {
+            border-color: var(--correct-color);
+            background-color: #e6ffe6; /* Verde muy claro */
+            box-shadow: 0 0 8px var(--correct-color);
+        }
+
+        .item.incorrect {
+            border-color: var(--incorrect-color);
+            background-color: #ffe6e6; /* Rojo muy claro */
+            box-shadow: 0 0 8px var(--incorrect-color);
+        }
+
+        /* Botón de Verificar */
+        #check-button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.3em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        #check-button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        #check-button:active {
+            transform: translateY(0);
+        }
+
+        /* Área de Retroalimentación */
+        #feedback {
+            margin-top: 30px;
+            font-size: 1.4em;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px 25px;
+            border-radius: 8px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #feedback.success {
+            background-color: #d4edda; /* Verde claro */
+            color: var(--correct-color);
+            border: 1px solid var(--correct-color);
+        }
+
+        #feedback.fail {
+            background-color: #f8d7da; /* Rojo claro */
+            color: var(--incorrect-color);
+            border: 1px solid var(--incorrect-color);
+        }
+
+        /* Media Queries para Responsividad */
+        @media (max-width: 768px) {
+            header {
+                padding: 10px 15px;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            header img {
+                height: 50px;
+                margin-bottom: 10px;
+            }
+
+            header h1 {
+                font-size: 1.5em;
+            }
+
+            main {
+                margin: 10px auto;
+                padding: 15px;
+            }
+
+            h2 {
+                font-size: 1.8em;
+                margin-bottom: 20px;
+            }
+
+            .instructions {
+                font-size: 1em;
+                margin-bottom: 20px;
+            }
+
+            #items-container {
+                padding: 15px;
+                min-height: 120px;
+            }
+
+            .item {
+                padding: 10px 15px;
+                font-size: 1em;
+                min-width: 100px;
+            }
+
+            #drop-zones-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .drop-zone {
+                min-width: unset; /* Permite que el ancho se ajuste */
+                width: 90%; /* Ocupa la mayoría del ancho disponible */
+                max-width: 400px; /* Límite para zonas en móviles */
+                min-height: 200px;
+            }
+
+            .drop-zone h3 {
+                font-size: 1.3em;
+            }
+
+            #check-button {
+                padding: 12px 25px;
+                font-size: 1.1em;
+            }
+
+            #feedback {
+                font-size: 1.2em;
+                padding: 12px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="https://i.postimg.cc/mZzx20gW/Logosimbolo-SENA-PRINCIPAL.png" alt="Logosimbolo SENA">
+        <h1>Centro de Servicios y Gestión Empresarial</h1>
+    </header>
+
+    <main>
+        <h2>Clasificación de Conceptos en C#</h2>
+        <p class="instructions">Arrastra y suelta cada término en su categoría correspondiente. ¡Demuestra tu conocimiento de C#!</p>
+
+        <div id="items-container">
+            <!-- Los elementos arrastrables se generarán aquí con JS o se definirán estáticamente -->
+        </div>
+
+        <div id="drop-zones-container">
+            <div id="zone-tipos" class="drop-zone" data-category="Tipos de Datos Básicos">
+                <h3>Tipos de Datos Básicos</h3>
+                <div class="dropped-items-list"></div>
+            </div>
+            <div id="zone-control" class="drop-zone" data-category="Estructuras de Control de Flujo">
+                <h3>Estructuras de Control de Flujo</h3>
+                <div class="dropped-items-list"></div>
+            </div>
+            <div id="zone-poo" class="drop-zone" data-category="Conceptos de POO">
+                <h3>Conceptos de POO</h3>
+                <div class="dropped-items-list"></div>
+            </div>
+        </div>
+
+        <button id="check-button">Verificar Respuestas</button>
+
+        <div id="feedback">
+            <!-- La retroalimentación se mostrará aquí -->
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const itemsContainer = document.getElementById('items-container');
+            const dropZones = document.querySelectorAll('.drop-zone');
+            const checkButton = document.getElementById('check-button');
+            const feedbackDiv = document.getElementById('feedback');
+
+            let draggedItem = null;
+
+            // Definición de los elementos y sus categorías correctas
+            const concepts = [
+                { id: 'item-int', text: 'int', correctZone: 'zone-tipos' },
+                { id: 'item-string', text: 'string', correctZone: 'zone-tipos' },
+                { id: 'item-bool', text: 'bool', correctZone: 'zone-tipos' },
+                { id: 'item-double', text: 'double', correctZone: 'zone-tipos' },
+                { id: 'item-if', text: 'if', correctZone: 'zone-control' },
+                { id: 'item-for', text: 'for', correctZone: 'zone-control' },
+                { id: 'item-while', text: 'while', correctZone: 'zone-control' },
+                { id: 'item-switch', text: 'switch', correctZone: 'zone-control' },
+                { id: 'item-class', text: 'class', correctZone: 'zone-poo' },
+                { id: 'item-object', text: 'object', correctZone: 'zone-poo' },
+                { id: 'item-herencia', text: 'Herencia', correctZone: 'zone-poo' },
+                { id: 'item-polimorfismo', text: 'Polimorfismo', correctZone: 'zone-poo' },
+                { id: 'item-encapsulamiento', text: 'Encapsulamiento', correctZone: 'zone-poo' },
+                { id: 'item-abstraccion', text: 'Abstracción', correctZone: 'zone-poo' }
+            ];
+
+            // Función para inicializar los elementos arrastrables
+            function initializeItems() {
+                // Barajar los conceptos para que aparezcan en un orden aleatorio
+                const shuffledConcepts = concepts.sort(() => Math.random() - 0.5);
+
+                shuffledConcepts.forEach(concept => {
+                    const item = document.createElement('div');
+                    item.className = 'item';
+                    item.id = concept.id;
+                    item.textContent = concept.text;
+                    item.draggable = true;
+                    itemsContainer.appendChild(item);
+
+                    // Añadir listeners para cada item
+                    item.addEventListener('dragstart', (e) => {
+                        draggedItem = item;
+                        e.dataTransfer.setData('text/plain', item.id);
+                        setTimeout(() => {
+                            item.classList.add('dragging');
+                        }, 0); // Pequeño retraso para que la clase se aplique después del "ghost"
+                        
+                        // Limpiar feedback anterior del item
+                        item.classList.remove('correct', 'incorrect');
+                        feedbackDiv.textContent = '';
+                        feedbackDiv.classList.remove('success', 'fail');
+                    });
+
+                    item.addEventListener('dragend', () => {
+                        draggedItem.classList.remove('dragging');
+                        draggedItem = null;
+                    });
+                });
+            }
+
+            // Inicializar las zonas de soltar
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', (e) => {
+                    e.preventDefault(); // Permite soltar
+                    zone.classList.add('drag-over');
+                });
+
+                zone.addEventListener('dragleave', () => {
+                    zone.classList.remove('drag-over');
+                });
+
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    zone.classList.remove('drag-over');
+                    
+                    if (draggedItem) {
+                        const targetList = zone.querySelector('.dropped-items-list');
+                        // Si el item ya está en una zona, lo movemos
+                        if (draggedItem.parentNode && draggedItem.parentNode.classList.contains('dropped-items-list')) {
+                            draggedItem.parentNode.removeChild(draggedItem);
+                        }
+                        targetList.appendChild(draggedItem);
+                        
+                        // Limpiar feedback anterior del item si se movió
+                        draggedItem.classList.remove('correct', 'incorrect');
+                        feedbackDiv.textContent = '';
+                        feedbackDiv.classList.remove('success', 'fail');
+                    }
+                });
+            });
+
+            // Lógica para el botón de verificar
+            checkButton.addEventListener('click', () => {
+                let correctCount = 0;
+                let totalItems = concepts.length;
+
+                // Limpiar feedback previo en todos los ítems
+                document.querySelectorAll('.item').forEach(item => {
+                    item.classList.remove('correct', 'incorrect');
+                });
+
+                concepts.forEach(concept => {
+                    const item = document.getElementById(concept.id);
+                    // Asegurarse de que el item existe y está en una zona de soltar
+                    if (item && item.parentNode && item.parentNode.parentNode.classList.contains('drop-zone')) {
+                        const currentZoneId = item.parentNode.parentNode.id;
+                        if (currentZoneId === concept.correctZone) {
+                            item.classList.add('correct');
+                            correctCount++;
+                        } else {
+                            item.classList.add('incorrect');
+                        }
+                    } else {
+                        // Si el item no fue arrastrado a ninguna zona, se considera incorrecto (o no clasificado)
+                        if (item) { // Asegurarse de que el item existe en el DOM
+                            item.classList.add('incorrect');
+                        }
+                    }
+                });
+
+                feedbackDiv.classList.remove('success', 'fail');
+                if (correctCount === totalItems) {
+                    feedbackDiv.textContent = `¡Felicidades! Has clasificado ${correctCount} de ${totalItems} conceptos correctamente.`;
+                    feedbackDiv.classList.add('success');
+                } else {
+                    feedbackDiv.textContent = `Has clasificado ${correctCount} de ${totalItems} conceptos correctamente. ¡Sigue practicando!`;
+                    feedbackDiv.classList.add('fail');
+                }
+            });
+
+            // Iniciar el juego
+            initializeItems();
+        });
+    </script>
+</body>
+</html>

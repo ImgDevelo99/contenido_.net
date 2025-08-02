@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Interactiva de POO en C# (Básico)</title>
+    <link rel="stylesheet" href="styleboton.css">
+
+
+    <style>
+        /* Estilos Generales */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Encabezado */
+        #header-bar {
+            background-color: #21409A; /* Azul oscuro */
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+
+        #header-bar img {
+            height: 50px; /* Ajusta el tamaño del logo */
+            margin-right: 15px;
+        }
+
+        #header-bar h1 {
+            margin: 0;
+            font-size: 1.5em;
+            font-weight: normal;
+        }
+
+        /* Contenedor Principal de la Aplicación */
+        #app-container {
+            display: flex;
+            flex: 1; /* Permite que el contenedor principal ocupe el espacio restante */
+            overflow: hidden; /* Oculta el desbordamiento si el contenido es demasiado grande */
+        }
+
+        /* Barra Lateral de Navegación */
+        #sidebar {
+            width: 280px;
+            background-color: #2c3e50; /* Azul grisáceo oscuro */
+            color: white;
+            padding: 20px 0;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            overflow-y: auto; /* Permite desplazamiento si hay muchos temas */
+            flex-shrink: 0; /* Evita que la barra lateral se encoja */
+        }
+
+        #sidebar h2 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 30px;
+            color: #ecf0f1; /* Gris claro */
+            font-size: 1.6em;
+        }
+
+        #sidebar ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #sidebar li {
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        #sidebar li:hover {
+            background-color: #34495e; /* Azul grisáceo un poco más claro */
+        }
+
+        #sidebar li.active {
+            background-color: #1abc9c; /* Verde turquesa */
+            color: white;
+            font-weight: bold;
+            border-left: 5px solid #16a085; /* Borde más oscuro para el activo */
+        }
+
+        /* Área de Contenido Principal */
+        #content-area {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto; /* Permite desplazamiento del contenido */
+            background-color: #ffffff;
+        }
+
+        #content-area h2 {
+            color: #21409A; /* Azul oscuro */
+            margin-top: 0;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        #content-area h3 {
+            color: #34495e; /* Azul grisáceo oscuro */
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        /* Estilos para fragmentos de código */
+        pre {
+            background-color: #ecf0f1; /* Gris muy claro */
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.95em;
+            line-height: 1.5;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+        }
+
+        code {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background-color: #e0e6eb;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        /* Estilos para demostraciones visuales */
+        .visual-demo-section {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .visual-demo-section h4 {
+            color: #2980b9; /* Azul medio */
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .visual-demo-section .code-example {
+            margin-bottom: 15px;
+        }
+
+        .visual-demo-section .output-example {
+            background-color: #2c3e50; /* Fondo oscuro para simular consola */
+            color: #ecf0f1; /* Texto claro */
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            white-space: pre-wrap; /* Mantiene saltos de línea y wraps text */
+            font-size: 0.9em;
+            box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Estilos para ejercicios */
+        .exercise-section {
+            background-color: #e8f5e9; /* Verde muy claro */
+            border: 1px solid #c8e6c9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .exercise-section h3 {
+            color: #2e7d32; /* Verde oscuro */
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .exercise-section input[type="text"] {
+            width: calc(100% - 22px); /* Ancho completo menos padding y borde */
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box; /* Incluye padding y borde en el ancho */
+        }
+
+        .exercise-section button {
+            background-color: #1abc9c; /* Verde turquesa */
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-top: 15px;
+            transition: background-color 0.3s ease;
+        }
+
+        .exercise-section button:hover {
+            background-color: #16a085; /* Verde más oscuro al pasar el ratón */
+        }
+
+        .feedback-message {
+            margin-top: 20px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: none; /* Oculto por defecto */
+        }
+
+        .feedback-message.correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .feedback-message.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <header id="header-bar">
+        <img src="https://i.postimg.cc/mZzx20gW/Logosimbolo-SENA-PRINCIPAL.png" alt="Logo SENA">
+        <h1>Centro de Servicios y Gestión Empresarial</h1>
+        <a href="poolaboratorio.html" class="btn btn-nav nav-header-btn">Laboratorio</a>
+    </header>
+
+    <div id="app-container">
+        <nav id="sidebar">
+            <h2>Temas de POO en C#</h2>
+            <ul id="topic-list">
+                <li data-topic-id="intro" class="active">1. Introducción a POO</li>
+                <li data-topic-id="classes-objects">2. Clases y Objetos</li>
+                <li data-topic-id="encapsulation">3. Encapsulación</li>
+                <li data-topic-id="inheritance">4. Herencia</li>
+                <li data-topic-id="polymorphism">5. Polimorfismo</li>
+            </ul>
+        </nav>
+
+        <main id="content-area">
+            <h2 id="topic-title"></h2>
+
+            <section class="theory-section">
+                <h3>Explicación Teórica</h3>
+                <div id="theory-content"></div>
+            </section>
+
+            <section class="visual-demo-section">
+                <h3>Demostración Visual (Ejemplo de Código y Salida)</h3>
+                <h4>Código C#:</h4>
+                <pre id="visual-code" class="code-example"></pre>
+                <h4>Salida de Consola (simulada):</h4>
+                <pre id="visual-output" class="output-example"></pre>
+            </section>
+
+            <section class="exercise-section">
+                <h3>Ejercicio Práctico</h3>
+                <div id="exercise-content"></div>
+                <input type="text" id="user-answer" placeholder="Escribe tu respuesta aquí...">
+                <button id="check-answer-button">Comprobar Respuesta</button>
+                <div id="feedback-message" class="feedback-message"></div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const topicsData = [
+            {
+                id: 'intro',
+                title: '1. Introducción a la Programación Orientada a Objetos (POO)',
+                theory: `
+                    <p>La Programación Orientada a Objetos (POO) es un paradigma de programación que utiliza "objetos" para diseñar aplicaciones y programas de ordenador. Es una forma de organizar el código, haciéndolo más modular, reusable y fácil de mantener.</p>
+                    <p>Los <strong>cuatro pilares fundamentales</strong> de la POO son:</p>
+                    <ul>
+                        <li><strong>Abstracción:</strong> Enfocarse en lo esencial y relevante de un objeto, ocultando los detalles de implementación complejos. Es la capacidad de representar una entidad del mundo real en el código de forma simplificada.</li>
+                        <li><strong>Encapsulación:</strong> Agrupar datos (atributos) y los métodos (funciones) que operan sobre esos datos dentro de una misma unidad (una clase). También implica proteger los datos internos de un objeto de accesos no autorizados desde el exterior.</li>
+                        <li><strong>Herencia:</strong> Permite que una clase (clase hija o derivada) adquiera propiedades y comportamientos de otra clase (clase padre o base). Esto promueve la reutilización de código.</li>
+                        <li><strong>Polimorfismo:</strong> Significa "muchas formas". Permite que objetos de diferentes clases sean tratados como objetos de una clase común, y que un mismo método pueda tener diferentes implementaciones en diferentes clases.</li>
+                    </ul>
+                    <p>C# es un lenguaje fuertemente orientado a objetos, lo que significa que la POO es un concepto central en su diseño y uso.</p>
+                `,
+                visual_code: `
+// Ejemplo conceptual - No es código C# ejecutable, sino una idea
+// Objeto: Coche
+// Abstracción: Velocidad, Color, Marca (lo que nos importa)
+// Encapsulación: El motor y los sistemas internos están ocultos,
+//                interactuamos con ellos a través de pedales y volante.
+// Herencia: Un Coche es un tipo de Vehículo.
+// Polimorfismo: Diferentes coches (eléctrico, gasolina) pueden
+//                tener un método 'Arrancar()' pero con implementaciones
+//                internas distintas.
+                `,
+                visual_output: `
+// Pensamiento POO:
+// Tenemos un 'Coche' azul de marca 'Toyota'
+// Podemos 'acelerar', 'frenar', 'girar'.
+// No necesitamos saber cómo el motor convierte la gasolina en movimiento.
+                `,
+                exercise: `
+                    <p>¿Cuáles son los cuatro pilares fundamentales de la Programación Orientada a Objetos? (Nombra al menos dos, separados por coma)</p>
+                `,
+                correct_answer: ['abstraccion', 'encapsulacion', 'herencia', 'polimorfismo'],
+                feedback_correct: '¡Correcto! Los cuatro pilares son Abstracción, Encapsulación, Herencia y Polimorfismo.',
+                feedback_incorrect: 'Incorrecto. Los cuatro pilares son Abstracción, Encapsulación, Herencia y Polimorfismo. Asegúrate de escribirlos correctamente.'
+            },
+            {
+                id: 'classes-objects',
+                title: '2. Clases y Objetos',
+                theory: `
+                    <p>En POO, una <strong>clase</strong> es un plano o plantilla para crear objetos. Define la estructura (propiedades o atributos) y el comportamiento (métodos o funciones) que los objetos de esa clase tendrán.</p>
+                    <p>Un <strong>objeto</strong> es una instancia de una clase. Es una entidad concreta creada a partir de esa plantilla, con sus propios valores para las propiedades y la capacidad de ejecutar los métodos definidos en su clase.</p>
+                    <p>Imagina una clase <code>Perro</code>. Esta clase define que un perro tiene <code>nombre</code>, <code>raza</code>, y puede <code>ladrar()</code> o <code>comer()</code>. Luego, puedes crear objetos específicos como "Max" (un Labrador) o "Bella" (un Poodle), cada uno con su propio nombre y raza, pero ambos pueden ladrar y comer.</p>
+                    <ul>
+                        <li><strong>Propiedades (Atributos):</strong> Variables que representan las características de un objeto (ej., color, tamaño, nombre).</li>
+                        <li><strong>Métodos:</strong> Funciones que definen las acciones o comportamientos que un objeto puede realizar (ej., caminar, hablar, calcular).</li>
+                    </ul>
+                `,
+                visual_code: `
+// Definición de una Clase en C#
+public class Persona
+{
+    // Propiedades (Atributos)
+    public string Nombre { get; set; }
+    public int Edad { get; set; }
+
+    // Constructor (Método especial para crear objetos)
+    public Persona(string nombre, int edad)
+    {
+        Nombre = nombre;
+        Edad = edad;
+    }
+
+    // Método (Comportamiento)
+    public void Saludar()
+    {
+        Console.WriteLine($"Hola, mi nombre es {Nombre} y tengo {Edad} años.");
+    }
+}
+
+// Creación de Objetos (Instancias de la Clase)
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Crear un objeto 'persona1' de la clase Persona
+        Persona persona1 = new Persona("Juan", 30);
+        persona1.Saludar(); // Llamar al método del objeto
+
+        // Crear otro objeto 'persona2'
+        Persona persona2 = new Persona("Maria", 25);
+        persona2.Saludar();
+    }
+}
+                `,
+                visual_output: `
+Hola, mi nombre es Juan y tengo 30 años.
+Hola, mi nombre es Maria y tengo 25 años.
+                `,
+                exercise: `
+                    <p>Crea una clase en C# llamada <code>Libro</code> con las siguientes propiedades públicas: <code>Titulo</code> (string) y <code>Autor</code> (string). Solo necesitas la definición de la clase con sus propiedades.</p>
+                    <p>Escribe el código C# para la clase <code>Libro</code>:</p>
+                `,
+                correct_answer: [
+                    'public class Libro',
+                    '{',
+                    'public string Titulo { get; set; }',
+                    'public string Autor { get; set; }',
+                    '}'
+                ].map(s => s.toLowerCase().replace(/\s/g, '')), // Normalizar para comparación sin espacios
+                feedback_correct: '¡Excelente! Has definido correctamente la clase Libro con sus propiedades.',
+                feedback_incorrect: 'Revisa la sintaxis. Asegúrate de incluir <code>public class Libro</code>, y dentro, <code>public string Titulo { get; set; }</code> y <code>public string Autor { get; set; }</code>.'
+            },
+            {
+                id: 'encapsulation',
+                title: '3. Encapsulación',
+                theory: `
+                    <p>La <strong>encapsulación</strong> es el principio de agrupar los datos (atributos) y los métodos que operan sobre esos datos en una sola unidad (la clase), y de <strong>restringir el acceso directo</strong> a algunos de los componentes del objeto. Esto se logra generalmente haciendo que los campos sean <code>private</code> y proporcionando métodos <code>public</code> (conocidos como "getters" y "setters" o en C# "propiedades") para acceder o modificar esos campos.</p>
+                    <p>Beneficios de la encapsulación:</p>
+                    <ul>
+                        <li><strong>Control de Acceso:</strong> Puedes validar los datos antes de que se asignen a un campo, o puedes decidir si un campo es de solo lectura.</li>
+                        <li><strong>Flexibilidad:</strong> Puedes cambiar la implementación interna de una clase sin afectar el código que la usa, siempre y cuando la interfaz pública (los métodos y propiedades públicos) no cambie.</li>
+                        <li><strong>Modularidad:</strong> Cada clase se convierte en una unidad autónoma y bien definida.</li>
+                    </ul>
+                    <p>En C#, las <strong<propiedades</strong> (<code>public Type PropertyName { get; set; }</code>) son la forma preferida de implementar la encapsulación, ya que automáticamente proporcionan los métodos <code>get</code> y <code>set</code> y permiten lógica adicional si es necesario.</p>
+                `,
+                visual_code: `
+// Sin encapsulación (mal ejemplo, acceso directo a campo)
+public class RectanguloMal
+{
+    public double longitud; // Campo público
+    public double anchura; // Campo público
+}
+
+// Con encapsulación (usando propiedades)
+public class Rectangulo
+{
+    private double _longitud; // Campo privado (backing field)
+    private double _anchura;  // Campo privado (backing field)
+
+    // Propiedad 'Longitud' con validación
+    public double Longitud
+    {
+        get { return _longitud; }
+        set
+        {
+            if (value > 0)
+                _longitud = value;
+            else
+                Console.WriteLine("La longitud debe ser positiva.");
+        }
+    }
+
+    // Propiedad autoimplementada (C# simplifica getter/setter básicos)
+    public double Anchura { get; set; }
+
+    public double CalcularArea()
+    {
+        return Longitud * Anchura;
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Rectangulo miRectangulo = new Rectangulo();
+        miRectangulo.Longitud = 10;   // Usa el 'set' de Longitud
+        miRectangulo.Anchura = 5;     // Usa el 'set' autoimplementado
+
+        Console.WriteLine($"Área: {miRectangulo.CalcularArea()}");
+
+        miRectangulo.Longitud = -2; // Intentará asignar un valor inválido
+    }
+}
+                `,
+                visual_output: `
+Área: 50
+La longitud debe ser positiva.
+                `,
+                exercise: `
+                    <p>Modifica la clase <code>Libro</code> del ejercicio anterior para encapsular sus propiedades <code>Titulo</code> y <code>Autor</code>. Haz que sean <strong>propiedades autoimplementadas públicas</strong> (es la forma más común y sencilla en C# para encapsular).</p>
+                    <p>Escribe el código C# para la clase <code>Libro</code> encapsulada:</p>
+                `,
+                correct_answer: [
+                    'public class Libro',
+                    '{',
+                    'public string Titulo { get; set; }',
+                    'public string Autor { get; set; }',
+                    '}'
+                ].map(s => s.toLowerCase().replace(/\s/g, '')), // Normalizar, es la misma que antes pero ahora se entiende la encapsulación
+                feedback_correct: '¡Excelente! Las propiedades autoimplementadas son la forma estándar de encapsular en C# cuando no necesitas lógica especial en get/set.',
+                feedback_incorrect: 'Recuerda que las propiedades autoimplementadas tienen la forma <code>public Tipo NombrePropiedad { get; set; }</code>.'
+            },
+            {
+                id: 'inheritance',
+                title: '4. Herencia',
+                theory: `
+                    <p>La <strong>herencia</strong> es un mecanismo de la POO que permite que una clase (llamada <strong>clase derivada</strong> o <strong>subclase</strong>) adquiera las propiedades y métodos de otra clase (llamada <strong>clase base</strong> o <strong>superclase</strong>). Esto promueve la reutilización de código y establece una relación "es-un" (is-a) entre las clases.</p>
+                    <p>Por ejemplo, un <code>Coche</code> <em>es un</em> <code>Vehiculo</code>, o un <code>Perro</code> <em>es un</em> <code>Animal</code>. La clase derivada hereda todo lo público y protegido de la clase base. En C#, la herencia se indica con dos puntos (<code>:</code>) después del nombre de la clase derivada, seguido del nombre de la clase base.</p>
+                    <p>Una clase derivada puede:</p>
+                    <ul>
+                        <li>Añadir nuevas propiedades y métodos.</li>
+                        <li>Anular (override) métodos de la clase base (si la base lo permite).</li>
+                    </ul>
+                    <p><strong>Limitaciones en C#:</strong> C# solo permite herencia simple, es decir, una clase solo puede heredar directamente de una única clase base. Sin embargo, puede implementar múltiples interfaces.</p>
+                `,
+                visual_code: `
+// Clase Base
+public class Vehiculo
+{
+    public string Marca { get; set; }
+    public int Anio { get; set; }
+
+    public Vehiculo(string marca, int anio)
+    {
+        Marca = marca;
+        Anio = anio;
+    }
+
+    public void Arrancar()
+    {
+        Console.WriteLine($"{Marca} del año {Anio} está arrancando...");
+    }
+}
+
+// Clase Derivada (Coche hereda de Vehiculo)
+public class Coche : Vehiculo
+{
+    public int NumeroDePuertas { get; set; }
+
+    public Coche(string marca, int anio, int numPuertas) : base(marca, anio)
+    {
+        NumeroDePuertas = numPuertas;
+    }
+
+    public void AbrirPuertas()
+    {
+        Console.WriteLine($"El coche {Marca} abre sus {NumeroDePuertas} puertas.");
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Coche miCoche = new Coche("Toyota", 2022, 4);
+        miCoche.Arrancar(); // Método heredado de Vehiculo
+        miCoche.AbrirPuertas(); // Método propio de Coche
+    }
+}
+                `,
+                visual_output: `
+Toyota del año 2022 está arrancando...
+El coche Toyota abre sus 4 puertas.
+                `,
+                exercise: `
+                    <p>Crea una clase llamada <code>Motocicleta</code> que herede de la clase <code>Vehiculo</code> (usa la clase Vehiculo del ejemplo). Añade una propiedad pública específica para <code>Motocicleta</code> llamada <code>TieneSidecar</code> (bool). Implementa un constructor que reciba marca, año y si tiene sidecar.</p>
+                    <p>Escribe el código C# para la clase <code>Motocicleta</code>:</p>
+                `,
+                correct_answer: [
+                    'public class Motocicleta : Vehiculo',
+                    '{',
+                    'public bool TieneSidecar { get; set; }',
+                    'public Motocicleta(string marca, int anio, bool tieneSidecar) : base(marca, anio)',
+                    '{',
+                    'TieneSidecar = tieneSidecar;',
+                    '}',
+                    '}'
+                ].map(s => s.toLowerCase().replace(/\s/g, '')), // Normalizar
+                feedback_correct: '¡Excelente! Has creado una clase derivada correctamente y has usado el constructor base.',
+                feedback_incorrect: 'Asegúrate de que <code>Motocicleta</code> herede de <code>Vehiculo</code> (<code>: Vehiculo</code>) y que el constructor llame al constructor de la clase base (<code>: base(marca, anio)</code>).'
+            },
+            {
+                id: 'polymorphism',
+                title: '5. Polimorfismo',
+                theory: `
+                    <p>El <strong>polimorfismo</strong> (del griego "muchas formas") es la capacidad de un objeto de tomar muchas formas o la capacidad de un mismo método de tener diferentes implementaciones en diferentes clases que comparten una interfaz común (a menudo a través de la herencia).</p>
+                    <p>En C#, el polimorfismo se logra principalmente de dos maneras:</p>
+                    <ul>
+                        <li><strong>Anulación de Métodos (Method Overriding):</strong> Una clase derivada proporciona una implementación específica para un método que ya está definido en su clase base. Para que un método pueda ser anulado, debe ser declarado con la palabra clave <code>virtual</code> en la clase base, y anulado con la palabra clave <code>override</code> en la clase derivada. Esto es útil cuando la clase base tiene un comportamiento predeterminado que las clases derivadas necesitan modificar.</li>
+                        <li><strong>Sobrecarga de Métodos (Method Overloading):</strong> Permite tener múltiples métodos con el mismo nombre en la misma clase, siempre y cuando tengan diferentes firmas (es decir, diferente número o tipo de parámetros). Esto no es exclusivo de la POO, pero es una forma de polimorfismo ad-hoc.</li>
+                    </ul>
+                    <p>El polimorfismo es crucial para escribir código flexible y extensible, ya que permite tratar objetos de diferentes clases de manera uniforme a través de su clase base o interfaz común.</p>
+                `,
+                visual_code: `
+// Clase Base con método virtual
+public class Animal
+{
+    public string Nombre { get; set; }
+
+    public Animal(string nombre)
+    {
+        Nombre = nombre;
+    }
+
+    // Método virtual que puede ser anulado
+    public virtual void HacerSonido()
+    {
+        Console.WriteLine($"{Nombre} hace un sonido genérico.");
+    }
+}
+
+// Clase Derivada 1 que anula el método
+public class Perro : Animal
+{
+    public Perro(string nombre) : base(nombre) { }
+
+    // Anula el método HacerSonido de la clase base
+    public override void HacerSonido()
+    {
+        Console.WriteLine($"{Nombre} ladra: ¡Guau! ¡Guau!");
+    }
+}
+
+// Clase Derivada 2 que anula el método
+public class Gato : Animal
+{
+    public Gato(string nombre) : base(nombre) { }
+
+    // Anula el método HacerSonido de la clase base
+    public override void HacerSonido()
+    {
+        Console.WriteLine($"{Nombre} maúlla: ¡Miau! ¡Miau!");
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Usando polimorfismo a través de la clase base
+        Animal miPerro = new Perro("Buddy");
+        Animal miGato = new Gato("Whiskers");
+        Animal miAnimalGenerico = new Animal("Un animal cualquiera");
+
+        miPerro.HacerSonido();       // Llama a la versión de Perro
+        miGato.HacerSonido();        // Llama a la versión de Gato
+        miAnimalGenerico.HacerSonido(); // Llama a la versión de Animal
+    }
+}
+                `,
+                visual_output: `
+Buddy ladra: ¡Guau! ¡Guau!
+Whiskers maúlla: ¡Miau! ¡Miau!
+Un animal cualquiera hace un sonido genérico.
+                `,
+                exercise: `
+                    <p>En la clase <code>Vehiculo</code> (del ejemplo de Herencia), añade un método <code>virtual public void MostrarDetalles()</code> que imprima la marca y el año. Luego, en la clase <code>Coche</code>, <strong>anula</strong> este método para que también imprima el número de puertas.</p>
+                    <p>Escribe el código C# para el método <code>MostrarDetalles</code> en <code>Vehiculo</code> y su anulación en <code>Coche</code>.</p>
+                    <p><strong>Solo el código de los métodos, no las clases completas.</strong></p>
+                `,
+                correct_answer: [
+                    '// En Vehiculo',
+                    'public virtual void MostrarDetalles()',
+                    '{',
+                    'Console.WriteLine($"Marca: {Marca}, Año: {Anio}");',
+                    '}',
+                    '// En Coche',
+                    'public override void MostrarDetalles()',
+                    '{',
+                    'base.MostrarDetalles(); // Llama al método de la base',
+                    'Console.WriteLine($"Número de Puertas: {NumeroDePuertas}");',
+                    '}'
+                ].map(s => s.toLowerCase().replace(/\s/g, '')), // Normalizar
+                feedback_correct: '¡Fantástico! Has implementado el polimorfismo con éxito, usando <code>virtual</code>, <code>override</code> y <code>base</code>.',
+                feedback_incorrect: 'Revisa: El método en la clase base debe ser <code>virtual</code>. En la clase derivada, debe usar <code>override</code> y puede usar <code>base.MostrarDetalles()</code> para llamar a la implementación de la clase padre.'
+            }
+        ];
+
+        // Referencias a elementos del DOM
+        const topicList = document.getElementById('topic-list');
+        const topicTitle = document.getElementById('topic-title');
+        const theoryContent = document.getElementById('theory-content');
+        const visualCode = document.getElementById('visual-code');
+        const visualOutput = document.getElementById('visual-output');
+        const exerciseContent = document.getElementById('exercise-content');
+        const userAnswerInput = document.getElementById('user-answer');
+        const checkAnswerButton = document.getElementById('check-answer-button');
+        const feedbackMessage = document.getElementById('feedback-message');
+
+        let currentTopicId = 'intro'; // Almacena el ID del tema actual
+
+        // Función para cargar el contenido de un tema
+        function loadTopic(topicId) {
+            const topic = topicsData.find(t => t.id === topicId);
+            if (!topic) {
+                console.error('Tema no encontrado:', topicId);
+                return;
+            }
+
+            currentTopicId = topicId; // Actualiza el tema actual
+
+            // Actualizar contenido
+            topicTitle.innerHTML = topic.title;
+            theoryContent.innerHTML = topic.theory;
+            visualCode.textContent = topic.visual_code.trim(); // .trim() para quitar espacios extra
+            visualOutput.textContent = topic.visual_output.trim();
+            exerciseContent.innerHTML = topic.exercise;
+            userAnswerInput.value = ''; // Limpiar campo de respuesta
+            feedbackMessage.style.display = 'none'; // Ocultar mensaje de feedback
+            feedbackMessage.className = 'feedback-message'; // Resetear clases de feedback
+
+            // Actualizar estado 'active' en la barra lateral
+            document.querySelectorAll('#topic-list li').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.topicId === topicId) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        // Función para comprobar la respuesta del ejercicio
+        function checkAnswer() {
+            const topic = topicsData.find(t => t.id === currentTopicId);
+            if (!topic) return;
+
+            // Normalizar la respuesta del usuario: a minúsculas y sin espacios/saltos de línea
+            const userAnswer = userAnswerInput.value.toLowerCase().replace(/\s/g, ''); 
+            let isCorrect = false;
+
+            if (Array.isArray(topic.correct_answer)) {
+                // Para ejercicios que esperan múltiples fragmentos (ej. código)
+                // Se verifica que la respuesta del usuario contenga CADA uno de los fragmentos correctos
+                isCorrect = topic.correct_answer.every(correctPart => userAnswer.includes(correctPart));
+            } else {
+                // Para ejercicios de respuesta única de texto
+                const normalizedCorrectAnswer = topic.correct_answer.toLowerCase().replace(/\s/g, '');
+                isCorrect = (userAnswer === normalizedCorrectAnswer);
+            }
+            
+            // Mostrar feedback
+            feedbackMessage.style.display = 'block';
+            if (isCorrect) {
+                feedbackMessage.className = 'feedback-message correct';
+                feedbackMessage.textContent = topic.feedback_correct;
+            } else {
+                feedbackMessage.className = 'feedback-message incorrect';
+                feedbackMessage.textContent = topic.feedback_incorrect;
+            }
+        }
+
+        // Event Listeners
+        topicList.addEventListener('click', (event) => {
+            const target = event.target;
+            if (target.tagName === 'LI' && target.dataset.topicId) {
+                loadTopic(target.dataset.topicId);
+            }
+        });
+
+        checkAnswerButton.addEventListener('click', checkAnswer);
+
+        // Cargar el primer tema al cargar la página
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTopic(currentTopicId);
+        });
+    </script>
+</body>
+</html>
